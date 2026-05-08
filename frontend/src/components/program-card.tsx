@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Copy, Check, Eye, Plus, Pencil, Trash2 } from 'lucide-react'
 import { type Program } from '@/types'
-import { buildRedirectUrl, formatNumber } from '@/lib/utils'
+import { formatNumber } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,7 @@ interface ProgramCardProps {
 
 export function ProgramCard({ program: p, onEdit, onDelete, onAddLinks, onViewDetail }: ProgramCardProps) {
   const [copied, setCopied] = useState(false)
-  const redirectUrl = buildRedirectUrl(p.slug)
+  const redirectUrl = p.embed_url
 
   function copyRedirect() {
     navigator.clipboard.writeText(redirectUrl)

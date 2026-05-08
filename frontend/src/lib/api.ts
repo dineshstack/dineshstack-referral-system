@@ -23,6 +23,17 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// ── Auth ──────────────────────────────────────────────────────────────────────
+
+export async function login(email: string, password: string): Promise<{ token: string; user: { id: number; name: string; email: string } }> {
+  const res = await api.post('/api/login', { email, password })
+  return res.data
+}
+
+export async function logout(): Promise<void> {
+  await api.post('/api/logout')
+}
+
 // ── Programs ──────────────────────────────────────────────────────────────────
 
 export async function getPrograms(): Promise<Program[]> {
@@ -40,8 +51,6 @@ export async function getProgram(
 export async function createProgram(data: ProgramFormData): Promise<Program> {
   const payload = {
     ...data,
-    // Textarea sends a string; backend validation expects an array of URLs.
-    // Split on newlines OR commas so both formats work.
     initial_links: data.initial_links
       ? data.initial_links.split(/[\n,]+/).map(s => s.trim()).filter(Boolean)
       : undefined,

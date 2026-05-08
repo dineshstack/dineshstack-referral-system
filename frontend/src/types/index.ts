@@ -1,5 +1,6 @@
-export type LinkType   = 'onetime' | 'permanent'
-export type LinkStatus = 'active' | 'queued' | 'used' | 'expired'
+export type LinkType      = 'onetime' | 'permanent'
+export type LinkStatus    = 'active' | 'queued' | 'used' | 'expired'
+export type ProgramPrefix = 'tools' | 'deals' | 'get' | 'start' | 'root'
 
 export interface Program {
   id: number
@@ -10,6 +11,8 @@ export interface Program {
   color: string
   commission: string | null
   link_type: LinkType
+  prefix: ProgramPrefix
+  embed_url: string
   affiliate_dashboard_url: string | null
   low_queue_threshold: number
   critical_queue_threshold: number
@@ -114,6 +117,7 @@ export interface ProgramFormData {
   color: string
   commission: string
   link_type: LinkType
+  prefix: ProgramPrefix
   affiliate_dashboard_url: string
   low_queue_threshold: number
   critical_queue_threshold: number

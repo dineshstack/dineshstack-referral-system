@@ -1,11 +1,13 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { BarChart3, LinkIcon, ExternalLink } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { BarChart3, LinkIcon, ExternalLink, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { logout } from '@/lib/api'
 
 const navItems = [
   { href: '/',          icon: LinkIcon,   label: 'Programs'  },
@@ -13,7 +15,22 @@ const navItems = [
 ]
 
 export function AppSidebar() {
-  const pathname = usePathname()
+  const pathname      = usePathname()
+  const router        = useRouter()
+  const [loggingOut, setLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    try {
+      await logout()
+    } catch {
+      // token may already be invalid — proceed anyway
+    } finally {
+      localStorage.removeItem('api_token')
+      localStorage.removeItem('user')
+      router.replace('/login')
+    }
+  }
 
   return (
     <aside className="flex h-screen w-60 flex-col border-r bg-sidebar">
@@ -55,12 +72,12 @@ export function AppSidebar() {
 
       <Separator className="bg-sidebar-border" />
 
-      {/* Footer — test redirect link */}
-      <div className="p-3">
+      {/* Footer */}
+      <div className="p-3 space-y-1">
         <Tooltip>
           <TooltipTrigger asChild>
             <a
-              href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:8000'}/go/hostinger`}
+              href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:8000'}/tools/hostinger`}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-2 rounded-md px-3 py-2 text-xs text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
@@ -69,8 +86,17 @@ export function AppSidebar() {
               Test redirect
             </a>
           </TooltipTrigger>
-          <TooltipContent side="right">Open /go/hostinger in new tab</TooltipContent>
+          <TooltipContent side="right">Open /tools/hostinger in new tab</TooltipContent>
         </Tooltip>
+
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs text-sidebar-foreground/60 hover:text-destructive hover:bg-sidebar-accent transition-colors"
+        >
+          <LogOut className="h-3.5 w-3.5 shrink-0" />
+          {loggingOut ? 'Signing out…' : 'Sign out'}
+        </button>
       </div>
     </aside>
   )

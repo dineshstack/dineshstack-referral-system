@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { type Program, type ProgramFormData, type LinkType } from '@/types'
+import { type Program, type ProgramFormData, type LinkType, type ProgramPrefix } from '@/types'
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog'
@@ -16,9 +16,18 @@ import {
 const CATEGORIES = ['Hosting', 'Domain', 'VPN', 'SaaS Tool', 'Design', 'SEO Tool', 'Email', 'Finance', 'Other']
 const COLORS      = ['#f97316', '#3b82f6', '#8b5cf6', '#22c55e', '#ec4899', '#06b6d4', '#f59e0b', '#ef4444']
 
+const PREFIX_OPTIONS: { value: ProgramPrefix; label: string; example: string }[] = [
+  { value: 'tools', label: '/tools/',  example: 'dineshstack.com/tools/hosting' },
+  { value: 'deals', label: '/deals/',  example: 'dineshstack.com/deals/vpn' },
+  { value: 'get',   label: '/get/',    example: 'dineshstack.com/get/server' },
+  { value: 'start', label: '/start/',  example: 'dineshstack.com/start/hosting' },
+  { value: 'root',  label: '/ (root)', example: 'dineshstack.com/hosting' },
+]
+
 const EMPTY_FORM: ProgramFormData = {
   name: '', slug: '', category: 'Hosting', icon: '🔗',
   color: COLORS[0], commission: '', link_type: 'onetime',
+  prefix: 'tools',
   affiliate_dashboard_url: '', low_queue_threshold: 3,
   critical_queue_threshold: 1, initial_links: '',
 }
@@ -46,6 +55,7 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
         color:                   program.color,
         commission:              program.commission ?? '',
         link_type:               program.link_type,
+        prefix:                  program.prefix ?? 'tools',
         affiliate_dashboard_url: program.affiliate_dashboard_url ?? '',
         low_queue_threshold:      program.low_queue_threshold,
         critical_queue_threshold: program.critical_queue_threshold,
@@ -108,21 +118,47 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
 
           {/* Slug */}
           <div className="space-y-1.5">
-            <Label htmlFor="slug">Redirect Slug *</Label>
-            <div className="flex">
-              <span className="inline-flex items-center rounded-l-md border border-r-0 bg-muted px-3 text-sm text-muted-foreground">
-                /go/
-              </span>
-              <Input
-                id="slug"
-                value={form.slug}
-                onChange={e => set('slug', e.target.value)}
-                placeholder="hostinger"
-                className={`rounded-l-none ${errors.slug ? 'border-destructive' : ''}`}
-              />
-            </div>
+            <Label htmlFor="slug">Slug *</Label>
+            <Input
+              id="slug"
+              value={form.slug}
+              onChange={e => set('slug', e.target.value)}
+              placeholder="hosting"
+              className={errors.slug ? 'border-destructive' : ''}
+            />
             {errors.slug && <p className="text-xs text-destructive">{errors.slug}</p>}
           </div>
+
+          {/* URL Prefix */}
+          <div className="space-y-1.5">
+            <Label>URL Prefix</Label>
+            <Select value={form.prefix} onValueChange={v => set('prefix', v as ProgramPrefix)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {PREFIX_OPTIONS.map(opt => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    <span className="font-mono">{opt.label}</span>
+                    <span className="text-muted-foreground ml-2 text-xs">{opt.example}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Embed URL preview */}
+          {form.slug && (
+            <div className="col-span-2 rounded-lg border bg-muted/40 px-3 py-2">
+              <p className="text-xs text-muted-foreground mb-1">Your embed URL</p>
+              <code className="text-sm font-mono">
+                {(() => {
+                  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:8000'
+                  return form.prefix === 'root'
+                    ? `${base}/${form.slug}`
+                    : `${base}/${form.prefix}/${form.slug}`
+                })()}
+              </code>
+            </div>
+          )}
 
           {/* Category */}
           <div className="space-y-1.5">

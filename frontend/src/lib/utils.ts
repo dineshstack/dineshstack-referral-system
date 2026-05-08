@@ -27,3 +27,8 @@ export function buildRedirectUrl(slug: string): string {
   const base = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:8000'
   return `${base}/go/${slug}`
 }
+
+export function buildEmbedUrl(slug: string, prefix: import('@/types').ProgramPrefix): string {
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:8000'
+  return prefix === 'root' ? `${base}/${slug}` : `${base}/${prefix}/${slug}`
+}
