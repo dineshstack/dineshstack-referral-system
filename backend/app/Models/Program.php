@@ -49,6 +49,11 @@ class Program extends Model
         return $this->hasMany(ClickEvent::class);
     }
 
+    public function postbackEvents(): HasMany
+    {
+        return $this->hasMany(PostbackEvent::class);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     public function activeLink(): ?ReferralLink

@@ -35,7 +35,8 @@ class CheckLinkExpiry extends Command
         }
 
         // 2. Expire all active links whose expires_at has passed, then promote next
-        $expiredActive = ReferralLink::where('status', 'active')
+        $expiredActive = ReferralLink::with('program')  // eager-load to avoid N+1
+            ->where('status', 'active')
             ->whereNotNull('expires_at')
             ->where('expires_at', '<', now())
             ->get();

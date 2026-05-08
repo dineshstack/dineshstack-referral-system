@@ -16,14 +16,17 @@ class ReferralLink extends Model
         'used_at',
         'expires_at',
         'notes',
+        'health_status',
+        'health_checked_at',
     ];
 
     protected function casts(): array
     {
         return [
-            'activated_at' => 'datetime',
-            'used_at'      => 'datetime',
-            'expires_at'   => 'datetime',
+            'activated_at'     => 'datetime',
+            'used_at'          => 'datetime',
+            'expires_at'       => 'datetime',
+            'health_checked_at' => 'datetime',
         ];
     }
 

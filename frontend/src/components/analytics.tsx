@@ -43,10 +43,11 @@ export function AnalyticsPage() {
 
   if (!data) return null
 
-  const { totals, programs, clicks_per_day, top_referers, utm_sources } = data
-  const maxClicks = Math.max(...programs.map(p => p.total_clicks), 1)
-  const maxDay    = Math.max(...clicks_per_day.map(d => d.clicks), 1)
-  const maxUtm    = Math.max(...utm_sources.map(u => u.count), 1)
+  const { totals, programs, clicks_per_day, top_referers, utm_sources, top_countries } = data
+  const maxClicks   = Math.max(...programs.map(p => p.total_clicks), 1)
+  const maxDay      = Math.max(...clicks_per_day.map(d => d.clicks), 1)
+  const maxUtm      = Math.max(...utm_sources.map(u => u.count), 1)
+  const maxCountry  = Math.max(...top_countries.map(c => c.count), 1)
 
   const botPct = totals.clicks > 0
     ? Math.round((totals.bot_clicks / totals.clicks) * 100)
@@ -109,9 +110,10 @@ export function AnalyticsPage() {
             <>
               <div className="flex items-end gap-1 h-40">
                 {clicks_per_day.map(d => {
-                  const realH  = Math.max(((d.clicks - d.bot_clicks) / maxDay) * 100, 0)
-                  const botH   = Math.max((d.bot_clicks / maxDay) * 100, 0)
-                  const totalH = Math.max((d.clicks / maxDay) * 100, 4)
+                  // MySQL SUM() returns a string via PDO — coerce to number
+                  const botCount = Number(d.bot_clicks ?? 0)
+                  const realH    = Math.max(((d.clicks - botCount) / maxDay) * 100, 0)
+                  const botH     = Math.max((botCount / maxDay) * 100, 0)
                   return (
                     <div key={d.date} className="flex flex-col items-center gap-1 flex-1 min-w-0 group">
                       <div
@@ -235,6 +237,37 @@ export function AnalyticsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Top Countries */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Top Countries</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {top_countries.length === 0 ? (
+            <p className="text-center text-muted-foreground py-6 text-sm">
+              No country data yet — countries resolve automatically every 5 minutes
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              {top_countries.map((c, i) => (
+                <div key={i} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">{c.country}</span>
+                    <span className="text-muted-foreground text-xs">{formatNumber(c.count)}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-blue-500/70 transition-all"
+                      style={{ width: `${(c.count / maxCountry) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

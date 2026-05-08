@@ -23,7 +23,8 @@ export function AddLinksModal({ open, program, onAdd, onClose }: AddLinksModalPr
   const [saving, setSaving] = useState(false)
   const [error, setError]   = useState('')
 
-  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean)
+  // Accept newline-separated OR comma-separated URLs
+  const lines = raw.split(/[\n,]+/).map(l => l.trim()).filter(Boolean)
 
   function handleClose() {
     setRaw('')
@@ -81,7 +82,7 @@ export function AddLinksModal({ open, program, onAdd, onClose }: AddLinksModalPr
         <div className="space-y-1.5">
           <Label htmlFor="links-input">
             Referral Links{' '}
-            <span className="text-muted-foreground font-normal">(one per line)</span>
+            <span className="text-muted-foreground font-normal">(one per line or comma-separated)</span>
           </Label>
           <Textarea
             id="links-input"

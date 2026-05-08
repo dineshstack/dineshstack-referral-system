@@ -171,6 +171,15 @@ class ProgramController extends Controller
             ->limit(10)
             ->get();
 
+        $topCountries = ClickEvent::selectRaw('country, COUNT(*) as count')
+            ->whereNotNull('country')
+            ->where('is_bot', false)
+            ->where('created_at', '>=', $since)
+            ->groupBy('country')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
         $allClicks  = ClickEvent::where('created_at', '>=', $since)->count();
         $botClicks  = ClickEvent::where('created_at', '>=', $since)->where('is_bot', true)->count();
 
@@ -179,6 +188,7 @@ class ProgramController extends Controller
             'clicks_per_day' => $clicksPerDay,
             'top_referers'   => $topReferers,
             'utm_sources'    => $utmSources,
+            'top_countries'  => $topCountries,
             'totals'         => [
                 'clicks'      => $allClicks,
                 'bot_clicks'  => $botClicks,

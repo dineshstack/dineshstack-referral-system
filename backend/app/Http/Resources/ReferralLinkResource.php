@@ -17,9 +17,11 @@ class ReferralLinkResource extends JsonResource
             'position'     => $this->position,
             'activated_at' => $this->activated_at?->toIso8601String(),
             'used_at'      => $this->used_at?->toIso8601String(),
-            'expires_at'   => $this->expires_at?->toIso8601String(),
-            'notes'        => $this->notes,
-            'created_at'   => $this->created_at?->toIso8601String(),
+            'expires_at'        => $this->expires_at?->toIso8601String(),
+            'notes'             => $this->notes,
+            'health_status'     => $this->health_status,
+            'health_checked_at' => $this->health_checked_at?->toIso8601String(),
+            'created_at'        => $this->created_at?->toIso8601String(),
         ];
     }
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Copy, Check, ExternalLink, Plus, X, RotateCw, Bot, Clock } from 'lucide-react'
+import { ArrowLeft, Copy, Check, ExternalLink, Plus, X, RotateCw, Bot, Clock, HeartPulse } from 'lucide-react'
 import { getProgram, getLinks, removeLink, addLinks } from '@/lib/api'
 import { type Program, type ReferralLink, type ClickEvent, type LinkStatus } from '@/types'
 import { buildRedirectUrl, formatDate, formatDateTime } from '@/lib/utils'
@@ -213,6 +213,11 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
                       <span className="truncate font-mono text-xs block">{link.url}</span>
                       {link.notes && (
                         <span className="text-[10px] text-muted-foreground truncate block">{link.notes}</span>
+                      )}
+                      {link.health_status === 'dead' && (
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-red-500 font-medium mt-0.5">
+                          <HeartPulse className="h-3 w-3" /> dead link
+                        </span>
                       )}
                     </div>
                     <span><Badge variant={s.variant} className="text-[10px] px-1.5">{s.label}</Badge></span>

@@ -1,6 +1,9 @@
 <?php
 
 use App\Console\Commands\CheckLinkExpiry;
+use App\Console\Commands\CheckLinkHealth;
+use App\Console\Commands\SendDailyDigest;
+use App\Console\Commands\UpdateClickCountries;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,8 +18,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule): void {
-        // Expire overdue links and promote the next queued link every hour
+        // Expire overdue links and promote the next one
         $schedule->command(CheckLinkExpiry::class)->hourly();
+
+        // Resolve IP → country for click events with a NULL country
+        $schedule->command(UpdateClickCountries::class)->everyFiveMinutes();
+
+        // HTTP HEAD-check all active/queued links once a day (low-traffic window)
+        $schedule->command(CheckLinkHealth::class)->dailyAt('03:00');
+
+        // Morning performance summary via Telegram + email
+        $schedule->command(SendDailyDigest::class)->dailyAt('08:00');
     })
     ->withMiddleware(function (Middleware $middleware): void {
         // This project uses Sanctum *token* auth (Authorization: Bearer …), not SPA

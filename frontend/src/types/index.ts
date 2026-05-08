@@ -27,6 +27,8 @@ export interface Program {
   updated_at: string
 }
 
+export type HealthStatus = 'unchecked' | 'ok' | 'dead'
+
 export interface ReferralLink {
   id: number
   program_id: number
@@ -37,6 +39,8 @@ export interface ReferralLink {
   used_at: string | null
   expires_at: string | null
   notes: string | null
+  health_status: HealthStatus
+  health_checked_at: string | null
   created_at: string
 }
 
@@ -69,6 +73,11 @@ export interface UtmSource {
   count: number
 }
 
+export interface TopCountry {
+  country: string
+  count: number
+}
+
 export interface AnalyticsTotals {
   clicks: number
   bot_clicks: number
@@ -83,6 +92,7 @@ export interface AnalyticsData {
   clicks_per_day: ClicksPerDay[]
   top_referers: TopReferer[]
   utm_sources: UtmSource[]
+  top_countries: TopCountry[]
   totals: AnalyticsTotals
 }
 
