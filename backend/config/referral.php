@@ -5,6 +5,17 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | Site URL (redirect domain)
+    |--------------------------------------------------------------------------
+    | The public-facing domain where redirect links live.
+    | This is DIFFERENT from APP_URL (which is the API domain).
+    | Example: APP_URL=https://api-referral-system.orions360.com
+    |          SITE_URL=https://deals.orions360.com
+    */
+    'site_url' => env('SITE_URL', env('APP_URL')),
+
+    /*
+    |--------------------------------------------------------------------------
     | Notification Settings
     |--------------------------------------------------------------------------
     */

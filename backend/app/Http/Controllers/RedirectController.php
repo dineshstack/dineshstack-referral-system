@@ -28,8 +28,7 @@ class RedirectController extends Controller
         // Rate-limit real visitors only — bots are logged but never blocked here;
         // they are blocked from consuming one-time links inside handleClick().
         if (!$isBot && $this->isRateLimited($request->ip() ?? '0.0.0.0', $slug)) {
-            // Still redirect them to the home page; don't expose a 429 to visitors
-            return redirect(config('app.url') . '?ref_limited=' . $slug, 302);
+            return redirect(config('referral.site_url') . '?ref_limited=' . $slug, 302);
         }
 
         $utm = $this->extractUtm($request);
@@ -73,7 +72,7 @@ class RedirectController extends Controller
         }
 
         $separator = str_contains($url, '?') ? '&' : '?';
-        return $url . $separator . http_build_query($params);
+        return "{$url}{$separator}" . http_build_query($params);
     }
 
     private function isBot(string $userAgent): bool

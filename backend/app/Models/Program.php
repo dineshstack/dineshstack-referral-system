@@ -5,6 +5,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int         $id
+ * @property string      $name
+ * @property string      $slug
+ * @property string|null $category
+ * @property string|null $icon
+ * @property string|null $color
+ * @property string|null $commission
+ * @property string      $link_type
+ * @property string      $prefix
+ * @property string|null $affiliate_dashboard_url
+ * @property int         $low_queue_threshold
+ * @property int         $critical_queue_threshold
+ * @property bool        $is_active
+ * @property int         $total_clicks
+ * @property int         $total_conversions
+ * @property string      $total_earnings
+ * @property string      $created_at
+ * @property string      $updated_at
+ * — Appended
+ * @property int         $queue_count
+ * @property string|null $active_link_url
+ * @property bool        $is_queue_low
+ * @property bool        $is_empty
+ * @property string      $embed_url
+ */
 class Program extends Model
 {
     protected $fillable = [
@@ -109,7 +135,7 @@ class Program extends Model
 
     public function getEmbedUrlAttribute(): string
     {
-        $base = rtrim(config('app.url'), '/');
+        $base = rtrim(config('referral.site_url'), '/');
 
         return $this->prefix === 'root'
             ? "{$base}/{$this->slug}"
