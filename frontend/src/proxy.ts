@@ -6,7 +6,7 @@ const ADMIN_PATHS = new Set(['login', 'analytics', 'programs'])
 // Affiliate redirect URL prefixes defined in routes/web.php
 const REDIRECT_PREFIXES = new Set(['tools', 'deals', 'get', 'start', 'go'])
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const segments = pathname.split('/').filter(Boolean)
 
