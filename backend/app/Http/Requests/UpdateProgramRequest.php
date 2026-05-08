@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class UpdateProgramRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        $programId = $this->route('program')?->id;
+
+        return [
+            'name'                    => ['sometimes', 'string', 'max:100'],
+            'slug'                    => ['sometimes', 'string', 'max:60', Rule::unique('programs')->ignore($programId)],
+            'category'                => ['nullable', 'string', 'max:60'],
+            'icon'                    => ['nullable', 'string', 'max:10'],
+            'color'                   => ['nullable', 'string', 'max:20'],
+            'commission'              => ['nullable', 'string', 'max:60'],
+            'link_type'               => ['sometimes', 'in:onetime,permanent'],
+            'affiliate_dashboard_url' => ['nullable', 'url', 'max:500'],
+            'low_queue_threshold'      => ['nullable', 'integer', 'min:1', 'max:50'],
+            'critical_queue_threshold' => ['nullable', 'integer', 'min:1', 'max:20'],
+            'is_active'               => ['sometimes', 'boolean'],
+        ];
+    }
+}

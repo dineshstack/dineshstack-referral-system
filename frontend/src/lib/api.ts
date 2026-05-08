@@ -1,0 +1,95 @@
+import axios from 'axios'
+import type {
+  AnalyticsData,
+  Program,
+  ProgramFormData,
+  ReferralLink,
+} from '@/types'
+
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000',
+  headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+  withCredentials: true,
+})
+
+// Attach Sanctum token from env (set after php artisan db:seed)
+api.interceptors.request.use((config) => {
+  const token =
+    typeof window !== 'undefined'
+      ? (localStorage.getItem('api_token') ?? process.env.NEXT_PUBLIC_API_TOKEN)
+      : process.env.NEXT_PUBLIC_API_TOKEN
+
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+
+// ── Programs ──────────────────────────────────────────────────────────────────
+
+export async function getPrograms(): Promise<Program[]> {
+  const res = await api.get<{ data: Program[] }>('/api/programs')
+  return res.data.data
+}
+
+export async function getProgram(
+  id: number,
+): Promise<{ data: Program; recent_clicks: import('@/types').ClickEvent[] }> {
+  const res = await api.get(`/api/programs/${id}`)
+  return res.data
+}
+
+export async function createProgram(data: ProgramFormData): Promise<Program> {
+  const payload = {
+    ...data,
+    // Textarea sends a string; backend validation expects an array of URLs.
+    // Split on newlines OR commas so both formats work.
+    initial_links: data.initial_links
+      ? data.initial_links.split(/[\n,]+/).map(s => s.trim()).filter(Boolean)
+      : undefined,
+  }
+  const res = await api.post<{ data: Program }>('/api/programs', payload)
+  return res.data.data
+}
+
+export async function updateProgram(
+  id: number,
+  data: Partial<ProgramFormData>,
+): Promise<Program> {
+  const res = await api.put<{ data: Program }>(`/api/programs/${id}`, data)
+  return res.data.data
+}
+
+export async function deleteProgram(id: number): Promise<void> {
+  await api.delete(`/api/programs/${id}`)
+}
+
+// ── Links ─────────────────────────────────────────────────────────────────────
+
+export async function getLinks(programId: number): Promise<ReferralLink[]> {
+  const res = await api.get<{ data: ReferralLink[] }>(`/api/programs/${programId}/links`)
+  return res.data.data
+}
+
+export async function addLinks(
+  programId: number,
+  links: string[],
+): Promise<{ message: string; queue_count: number; active_link: string | null }> {
+  const res = await api.post(`/api/programs/${programId}/links`, { links })
+  return res.data
+}
+
+export async function removeLink(
+  programId: number,
+  linkId: number,
+): Promise<{ message: string; queue_count: number }> {
+  const res = await api.delete(`/api/programs/${programId}/links/${linkId}`)
+  return res.data
+}
+
+// ── Analytics ─────────────────────────────────────────────────────────────────
+
+export async function getAnalytics(days = 30): Promise<AnalyticsData> {
+  const res = await api.get<AnalyticsData>('/api/analytics', { params: { days } })
+  return res.data
+}
+
+export default api

@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class ProgramResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return [
+            'id'                      => $this->id,
+            'name'                    => $this->name,
+            'slug'                    => $this->slug,
+            'category'                => $this->category,
+            'icon'                    => $this->icon,
+            'color'                   => $this->color,
+            'commission'              => $this->commission,
+            'link_type'               => $this->link_type,
+            'affiliate_dashboard_url' => $this->affiliate_dashboard_url,
+            'low_queue_threshold'      => $this->low_queue_threshold,
+            'critical_queue_threshold' => $this->critical_queue_threshold,
+            'is_active'               => $this->is_active,
+            'total_clicks'            => $this->total_clicks,
+            'total_conversions'       => $this->total_conversions,
+            'total_earnings'          => (float) $this->total_earnings,
+
+            // Computed attributes
+            'queue_count'             => $this->queue_count,
+            'active_link_url'         => $this->active_link_url,
+            'is_queue_low'            => $this->is_queue_low,
+            'is_empty'                => $this->is_empty,
+
+            // Counts injected via withCount()
+            'queued_links_count'      => $this->whenCounted('links as queued_links_count'),
+
+            'created_at'              => $this->created_at?->toIso8601String(),
+            'updated_at'              => $this->updated_at?->toIso8601String(),
+        ];
+    }
+}
