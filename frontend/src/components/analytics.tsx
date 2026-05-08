@@ -64,9 +64,9 @@ export function AnalyticsPage() {
   ]
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
           <p className="text-muted-foreground text-sm mt-1">Click performance across all programs</p>
@@ -79,7 +79,7 @@ export function AnalyticsPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {statCards.map(({ label, val, icon: Icon, color, badge }) => (
           <Card key={label}>
             <CardContent className="pt-5">

@@ -113,15 +113,15 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
   const redirectUrl = buildRedirectUrl(program.slug)
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => router.push('/')}>
             <ArrowLeft className="h-4 w-4" /> Back
           </Button>
           <div>
-            <h1 className="text-xl font-bold flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2">
               <span>{program.icon}</span> {program.name}
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -129,7 +129,7 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
             </p>
           </div>
         </div>
-        <Button onClick={() => setShowAdd(true)}>
+        <Button onClick={() => setShowAdd(true)} className="self-start sm:self-auto">
           <Plus className="h-4 w-4" /> Add Links
         </Button>
       </div>
@@ -152,59 +152,104 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
       {/* Embed URL */}
       <div className="rounded-lg border bg-card p-4">
         <p className="text-xs font-medium text-muted-foreground mb-2">Your embed link (use this everywhere)</p>
-        <div className="flex items-center gap-2">
-          <code className="flex-1 truncate rounded-md border bg-muted px-3 py-2 text-sm font-mono">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <code className="flex-1 min-w-0 truncate rounded-md border bg-muted px-3 py-2 text-sm font-mono">
             {redirectUrl}
           </code>
-          <Button variant="outline" size="sm" onClick={copyRedirect}>
-            {copiedUrl ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> Copied</> : <><Copy className="h-3.5 w-3.5" /> Copy</>}
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <a href={redirectUrl} target="_blank" rel="noreferrer">
-              <ExternalLink className="h-3.5 w-3.5" /> Test
-            </a>
-          </Button>
+          <div className="flex gap-2 shrink-0">
+            <Button variant="outline" size="sm" onClick={copyRedirect}>
+              {copiedUrl ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> Copied</> : <><Copy className="h-3.5 w-3.5" /> Copy</>}
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <a href={redirectUrl} target="_blank" rel="noreferrer">
+                <ExternalLink className="h-3.5 w-3.5" /> Test
+              </a>
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Link queue */}
       <Card>
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-base">Link Queue</CardTitle>
-            <Tabs value={filter} onValueChange={v => setFilter(v as FilterTab)}>
-              <TabsList className="h-8">
-                {(['all', 'active', 'queued', 'used'] as const).map(f => (
-                  <TabsTrigger key={f} value={f} className="text-xs px-2.5 h-7">
-                    {f} ({counts[f]})
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
+            <div className="overflow-x-auto">
+              <Tabs value={filter} onValueChange={v => setFilter(v as FilterTab)}>
+                <TabsList className="h-8">
+                  {(['all', 'active', 'queued', 'used'] as const).map(f => (
+                    <TabsTrigger key={f} value={f} className="text-xs px-2.5 h-7">
+                      {f} ({counts[f]})
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="divide-y">
-            {/* Table header */}
-            <div className="grid grid-cols-[2rem_1fr_80px_90px_100px_40px] gap-2 px-4 py-2 text-xs font-medium text-muted-foreground">
-              <span>#</span>
-              <span>URL</span>
-              <span>Status</span>
-              <span>Added</span>
-              <span>Used / Expires</span>
-              <span />
-            </div>
-
-            {filtered.length === 0 ? (
-              <p className="text-center text-sm text-muted-foreground py-8">No links in this filter</p>
-            ) : (
-              filtered.map((link, i) => {
+          {filtered.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground py-8">No links in this filter</p>
+          ) : (
+            <div className="divide-y">
+              {/* Mobile: card per link */}
+              {filtered.map((link, i) => {
                 const s          = STATUS_BADGE[link.status]
                 const isExpiring = link.expires_at && link.status !== 'used' && link.status !== 'expired'
                 return (
                   <div
                     key={link.id}
-                    className={`grid grid-cols-[2rem_1fr_80px_90px_100px_40px] gap-2 items-center px-4 py-2.5 text-sm ${
+                    className={`p-4 space-y-2 sm:hidden ${link.status === 'active' ? 'bg-primary/5' : ''}`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">{i + 1}</span>
+                        <Badge variant={s.variant} className="text-[10px] px-1.5">{s.label}</Badge>
+                        {link.health_status === 'dead' && (
+                          <span className="inline-flex items-center gap-0.5 text-[10px] text-red-500 font-medium">
+                            <HeartPulse className="h-3 w-3" /> dead
+                          </span>
+                        )}
+                      </div>
+                      {(link.status === 'active' || link.status === 'queued') && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-destructive hover:text-destructive shrink-0"
+                          onClick={() => handleRemove(link.id, link.status)}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                    </div>
+                    <p className="font-mono text-xs break-all text-muted-foreground">{link.url}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>Added {formatDate(link.created_at)}</span>
+                      {link.used_at && <span>Used {formatDate(link.used_at)}</span>}
+                      {isExpiring && (
+                        <span className="flex items-center gap-1 text-amber-500">
+                          <Clock className="h-3 w-3" /> Expires {formatDate(link.expires_at!)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+
+              {/* Desktop: table header */}
+              <div className="hidden sm:grid grid-cols-[2rem_1fr_80px_90px_100px_40px] gap-2 px-4 py-2 text-xs font-medium text-muted-foreground">
+                <span>#</span><span>URL</span><span>Status</span>
+                <span>Added</span><span>Used / Expires</span><span />
+              </div>
+
+              {/* Desktop: table rows */}
+              {filtered.map((link, i) => {
+                const s          = STATUS_BADGE[link.status]
+                const isExpiring = link.expires_at && link.status !== 'used' && link.status !== 'expired'
+                return (
+                  <div
+                    key={`d-${link.id}`}
+                    className={`hidden sm:grid grid-cols-[2rem_1fr_80px_90px_100px_40px] gap-2 items-center px-4 py-2.5 text-sm ${
                       link.status === 'active' ? 'bg-primary/5' : ''
                     }`}
                   >
@@ -223,12 +268,9 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
                     <span><Badge variant={s.variant} className="text-[10px] px-1.5">{s.label}</Badge></span>
                     <span className="text-xs text-muted-foreground">{formatDate(link.created_at)}</span>
                     <span className="text-xs text-muted-foreground">
-                      {link.used_at ? (
-                        formatDate(link.used_at)
-                      ) : isExpiring ? (
+                      {link.used_at ? formatDate(link.used_at) : isExpiring ? (
                         <span className="flex items-center gap-1 text-amber-500">
-                          <Clock className="h-3 w-3" />
-                          {formatDate(link.expires_at!)}
+                          <Clock className="h-3 w-3" />{formatDate(link.expires_at!)}
                         </span>
                       ) : '—'}
                     </span>
@@ -246,9 +288,9 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
                     </span>
                   </div>
                 )
-              })
-            )}
-          </div>
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
 

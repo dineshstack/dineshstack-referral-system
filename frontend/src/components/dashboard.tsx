@@ -87,7 +87,7 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -126,7 +126,7 @@ export function DashboardPage() {
               <AlertTitle>
                 {p.name}: {p.is_empty ? 'Queue EMPTY' : `Only ${p.queued_links_count ?? p.queue_count} link(s) left`}
               </AlertTitle>
-              <AlertDescription className="flex items-center justify-between">
+              <AlertDescription className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <span>
                   {p.is_empty
                     ? 'Visitors are not getting referral links — you are losing commissions!'
@@ -135,7 +135,7 @@ export function DashboardPage() {
                 <Button
                   size="sm"
                   variant={p.is_empty ? 'destructive' : 'outline'}
-                  className="ml-4 shrink-0"
+                  className="self-start shrink-0 sm:ml-4"
                   onClick={() => setAddLinksTarget(p)}
                 >
                   + Add Links
