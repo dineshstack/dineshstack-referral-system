@@ -15,6 +15,7 @@ class Program extends Model
         'color',
         'commission',
         'link_type',
+        'prefix',
         'affiliate_dashboard_url',
         'low_queue_threshold',
         'critical_queue_threshold',
@@ -83,6 +84,7 @@ class Program extends Model
         'active_link_url',
         'is_queue_low',
         'is_empty',
+        'embed_url',
     ];
 
     public function getQueueCountAttribute(): int
@@ -103,5 +105,14 @@ class Program extends Model
     public function getIsEmptyAttribute(): bool
     {
         return $this->isEmpty();
+    }
+
+    public function getEmbedUrlAttribute(): string
+    {
+        $base = rtrim(config('app.url'), '/');
+
+        return $this->prefix === 'root'
+            ? "{$base}/{$this->slug}"
+            : "{$base}/{$this->prefix}/{$this->slug}";
     }
 }

@@ -24,6 +24,7 @@ class UpdateProgramRequest extends FormRequest
             'color'                   => ['nullable', 'string', 'max:20'],
             'commission'              => ['nullable', 'string', 'max:60'],
             'link_type'               => ['sometimes', 'in:onetime,permanent'],
+            'prefix'                  => ['sometimes', 'in:tools,deals,get,start,root'],
             'affiliate_dashboard_url' => ['nullable', 'url', 'max:500'],
             'low_queue_threshold'      => ['nullable', 'integer', 'min:1', 'max:50'],
             'critical_queue_threshold' => ['nullable', 'integer', 'min:1', 'max:20'],

@@ -22,6 +22,8 @@ class ProgramResource extends JsonResource
             'low_queue_threshold'      => $this->low_queue_threshold,
             'critical_queue_threshold' => $this->critical_queue_threshold,
             'is_active'               => $this->is_active,
+            'prefix'                  => $this->prefix,
+            'embed_url'               => $this->embed_url,
             'total_clicks'            => $this->total_clicks,
             'total_conversions'       => $this->total_conversions,
             'total_earnings'          => (float) $this->total_earnings,
