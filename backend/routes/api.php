@@ -4,11 +4,15 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PostbackController;
 use App\Http\Controllers\Api\ProgramController;
+use App\Http\Controllers\Api\PublicProgramController;
 use Illuminate\Support\Facades\Route;
 
 // ── Public routes ─────────────────────────────────────────────────────────────
 
 Route::post('login', [AuthController::class, 'login']);
+
+// Public deals feed — no auth, safe for external sites (0360_web, dineshstack blog)
+Route::get('public/programs', [PublicProgramController::class, 'index']);
 
 // Affiliate network conversion postback — authenticated via ?secret= query param.
 Route::post('postback', [PostbackController::class, 'receive']);

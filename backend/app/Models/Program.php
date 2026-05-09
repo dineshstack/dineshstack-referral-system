@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int         $low_queue_threshold
  * @property int         $critical_queue_threshold
  * @property bool        $is_active
+ * @property bool        $is_public
  * @property int         $total_clicks
  * @property int         $total_conversions
  * @property string      $total_earnings
@@ -46,6 +47,7 @@ class Program extends Model
         'low_queue_threshold',
         'critical_queue_threshold',
         'is_active',
+        'is_public',
         'total_clicks',
         'total_conversions',
         'total_earnings',
@@ -56,6 +58,7 @@ class Program extends Model
     {
         return [
             'is_active'                => 'boolean',
+            'is_public'                => 'boolean',
             'total_clicks'             => 'integer',
             'total_conversions'        => 'integer',
             'total_earnings'           => 'decimal:2',

@@ -60,6 +60,16 @@ export function DashboardPage() {
     }
   }
 
+  async function handleTogglePublic(program: Program) {
+    try {
+      await updateProgram(program.id, { is_public: !program.is_public })
+      toast.success(program.is_public ? `${program.name} hidden from public` : `${program.name} now visible publicly`)
+      load()
+    } catch {
+      toast.error('Failed to update visibility')
+    }
+  }
+
   async function handleDelete(id: number, name: string) {
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return
     try {
@@ -172,6 +182,7 @@ export function DashboardPage() {
               onDelete={() => handleDelete(p.id, p.name)}
               onAddLinks={() => setAddLinksTarget(p)}
               onViewDetail={() => router.push(`/programs/${p.id}`)}
+              onTogglePublic={() => handleTogglePublic(p)}
             />
           ))}
           {/* Add card placeholder */}

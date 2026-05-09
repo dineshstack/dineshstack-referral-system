@@ -29,6 +29,7 @@ class UpdateProgramRequest extends FormRequest
             'low_queue_threshold'      => ['nullable', 'integer', 'min:1', 'max:50'],
             'critical_queue_threshold' => ['nullable', 'integer', 'min:1', 'max:20'],
             'is_active'               => ['sometimes', 'boolean'],
+            'is_public'               => ['sometimes', 'boolean'],
         ];
     }
 }

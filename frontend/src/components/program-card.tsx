@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Eye, Plus, Pencil, Trash2 } from 'lucide-react'
+import { Copy, Check, Eye, Plus, Pencil, Trash2, Globe, GlobeLock } from 'lucide-react'
 import { type Program } from '@/types'
 import { formatNumber } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
@@ -15,9 +15,17 @@ interface ProgramCardProps {
   onDelete: () => void
   onAddLinks: () => void
   onViewDetail: () => void
+  onTogglePublic: () => void
 }
 
-export function ProgramCard({ program: p, onEdit, onDelete, onAddLinks, onViewDetail }: ProgramCardProps) {
+export function ProgramCard({
+  program: p,
+  onEdit,
+  onDelete,
+  onAddLinks,
+  onViewDetail,
+  onTogglePublic,
+}: ProgramCardProps) {
   const [copied, setCopied] = useState(false)
   const redirectUrl = p.embed_url
 
@@ -27,18 +35,16 @@ export function ProgramCard({ program: p, onEdit, onDelete, onAddLinks, onViewDe
     setTimeout(() => setCopied(false), 1500)
   }
 
-  const statusVariant = p.is_empty ? 'danger' : p.is_queue_low ? 'warning' : 'success'
-  const statusLabel   = p.is_empty ? 'Empty'  : p.is_queue_low ? 'Low'    : 'Active'
+  const queueVariant = p.is_empty ? 'danger' : p.is_queue_low ? 'warning' : 'success'
+  const queueLabel   = p.is_empty ? 'Empty'  : p.is_queue_low ? 'Low'    : 'Active'
 
   return (
     <Card className="relative overflow-hidden transition-shadow hover:shadow-md">
       {/* Color accent stripe */}
-      <div
-        className="absolute left-0 top-0 h-full w-1"
-        style={{ background: p.color ?? '#f97316' }}
-      />
+      <div className="absolute left-0 top-0 h-full w-1" style={{ background: p.color ?? '#f97316' }} />
 
       <CardContent className="pl-5 pt-5 pb-4">
+
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2.5">
@@ -50,8 +56,41 @@ export function ProgramCard({ program: p, onEdit, onDelete, onAddLinks, onViewDe
               </p>
             </div>
           </div>
-          <Badge variant={statusVariant}>{statusLabel}</Badge>
+          <div className="flex items-center gap-1.5">
+            {/* Public visibility toggle */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={onTogglePublic}
+                  className={`rounded-md p-1 transition-colors ${
+                    p.is_public
+                      ? 'text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950'
+                      : 'text-muted-foreground hover:bg-muted'
+                  }`}
+                >
+                  {p.is_public
+                    ? <Globe className="h-3.5 w-3.5" />
+                    : <GlobeLock className="h-3.5 w-3.5" />
+                  }
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[160px] text-center text-xs">
+                {p.is_public
+                  ? 'Shown on public deals page — click to hide'
+                  : 'Hidden from public — click to show'}
+              </TooltipContent>
+            </Tooltip>
+            <Badge variant={queueVariant}>{queueLabel}</Badge>
+          </div>
         </div>
+
+        {/* Public indicator strip */}
+        {p.is_public && (
+          <div className="mb-2 flex items-center gap-1 text-[10px] text-emerald-600 font-medium">
+            <Globe className="h-3 w-3" />
+            Visible on public deals page
+          </div>
+        )}
 
         {/* Embed URL */}
         <div className="mb-3">
@@ -61,7 +100,9 @@ export function ProgramCard({ program: p, onEdit, onDelete, onAddLinks, onViewDe
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={copyRedirect}>
-                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied
+                    ? <Check className="h-3.5 w-3.5 text-emerald-500" />
+                    : <Copy className="h-3.5 w-3.5" />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>{copied ? 'Copied!' : 'Copy link'}</TooltipContent>
@@ -80,10 +121,10 @@ export function ProgramCard({ program: p, onEdit, onDelete, onAddLinks, onViewDe
         {/* Stats */}
         <div className="grid grid-cols-4 gap-2 mb-4">
           {[
-            { label: 'Clicks',  val: formatNumber(p.total_clicks)     },
-            { label: 'Used',    val: formatNumber(p.total_conversions) },
-            { label: 'Queue',   val: formatNumber(p.queued_links_count ?? p.queue_count) },
-            { label: 'Rate',    val: p.commission ?? '—'               },
+            { label: 'Clicks', val: formatNumber(p.total_clicks) },
+            { label: 'Used',   val: formatNumber(p.total_conversions) },
+            { label: 'Queue',  val: formatNumber(p.queued_links_count ?? p.queue_count) },
+            { label: 'Rate',   val: p.commission ?? '—' },
           ].map(({ label, val }) => (
             <div key={label} className="text-center">
               <p className="text-sm font-semibold">{val}</p>
@@ -107,6 +148,7 @@ export function ProgramCard({ program: p, onEdit, onDelete, onAddLinks, onViewDe
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
+
       </CardContent>
     </Card>
   )

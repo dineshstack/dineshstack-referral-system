@@ -17,6 +17,7 @@ export interface Program {
   low_queue_threshold: number
   critical_queue_threshold: number
   is_active: boolean
+  is_public: boolean
   total_clicks: number
   total_conversions: number
   total_earnings: number
@@ -122,4 +123,7 @@ export interface ProgramFormData {
   low_queue_threshold: number
   critical_queue_threshold: number
   initial_links?: string
+  // Flags — not shown in the create/edit form but sent via patch
+  is_active?: boolean
+  is_public?: boolean
 }
