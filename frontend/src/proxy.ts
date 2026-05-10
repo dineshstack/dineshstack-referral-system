@@ -29,7 +29,7 @@ export function proxy(request: NextRequest) {
   if (isPrefixedRedirect || isRootSlug) {
     const apiBase = (process.env.NEXT_PUBLIC_API_URL ?? '')
       .replace(/\/api$/, '') // strip trailing /api
-      || 'https://api-referral-system.orions360.com'
+      || 'https://api-deals.orions360.com'
 
     return NextResponse.redirect(`${apiBase}${pathname}`, 302)
   }
