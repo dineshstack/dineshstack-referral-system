@@ -24,12 +24,32 @@ return [
     // Allow any origin to call the public programs endpoint (used for external embeds).
     'allowed_origins_patterns' => ['#.*#'],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => [
+
+        'Content-Type',
+
+        'X-Requested-With',
+
+        'Authorization',
+
+        'Accept',
+
+        'Accept-Language',
+
+        'Origin',
+
+        'X-HTTP-Method-Override',
+
+    ],
 
     'exposed_headers' => [],
 
-    'max_age' => 0,
+    // Cache preflight responses for 24 hours to reduce repeated OPTIONS requests
+    'max_age' => 86400,
 
-    'supports_credentials' => true,
+    // Must remain FALSE — this API uses Passport Bearer tokens, not cookies.
+    // Setting this to true would require Access-Control-Allow-Credentials: true
+    // which is incompatible with wildcard origins and not needed here.
+    'supports_credentials' => false,
 
 ];
