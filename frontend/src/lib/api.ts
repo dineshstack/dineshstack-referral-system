@@ -9,7 +9,7 @@ import type {
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000',
   headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-  withCredentials: false,
+  // withCredentials: false,
 })
 
 // Attach Sanctum token from env (set after php artisan db:seed)
