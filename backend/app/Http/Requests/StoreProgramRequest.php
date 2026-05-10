@@ -14,6 +14,7 @@ class StoreProgramRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'parent_id'               => ['nullable', 'integer', 'exists:programs,id'],
             'name'                    => ['required', 'string', 'max:100'],
             'slug'                    => ['nullable', 'string', 'max:60', 'unique:programs,slug'],
             'category'                => ['nullable', 'string', 'max:60'],

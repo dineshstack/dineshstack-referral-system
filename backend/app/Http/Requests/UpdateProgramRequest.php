@@ -17,6 +17,7 @@ class UpdateProgramRequest extends FormRequest
         $programId = $this->route('program')?->id;
 
         return [
+            'parent_id'               => ['nullable', 'integer', 'exists:programs,id'],
             'name'                    => ['sometimes', 'string', 'max:100'],
             'slug'                    => ['sometimes', 'string', 'max:60', Rule::unique('programs')->ignore($programId)],
             'category'                => ['nullable', 'string', 'max:60'],

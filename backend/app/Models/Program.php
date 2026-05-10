@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int         $id
+ * @property int|null    $parent_id
  * @property string      $name
  * @property string      $slug
  * @property string|null $category
@@ -35,6 +37,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Program extends Model
 {
     protected $fillable = [
+        'parent_id',
         'name',
         'slug',
         'category',
@@ -68,6 +71,16 @@ class Program extends Model
     }
 
     // ── Relationships ──────────────────────────────────────────────────────────
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Program::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(Program::class, 'parent_id')->orderBy('name');
+    }
 
     public function links(): HasMany
     {

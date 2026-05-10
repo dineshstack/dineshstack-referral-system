@@ -2,6 +2,7 @@
 // routes/api.php  — prefix: /api
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\LinksController;
 use App\Http\Controllers\Api\PostbackController;
 use App\Http\Controllers\Api\ProgramController;
 use App\Http\Controllers\Api\PublicProgramController;
@@ -30,8 +31,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Link queue management
     Route::get   ('programs/{program}/links',          [ProgramController::class, 'getLinks']);
     Route::post  ('programs/{program}/links',          [ProgramController::class, 'addLinks']);
-    Route::delete('programs/{program}/links/{linkId}', [ProgramController::class, 'removeLink']);
+    Route::delete('programs/{program}/links/{linkId}',          [ProgramController::class, 'removeLink']);
+    Route::patch ('programs/{program}/links/{linkId}/requeue',  [ProgramController::class, 'requeueLink']);
 
     // Analytics
     Route::get('analytics', [ProgramController::class, 'analytics']);
+
+    // All links across all programs — paginated + filterable
+    Route::get('links', [LinksController::class, 'index']);
 });

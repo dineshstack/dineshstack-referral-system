@@ -4,6 +4,7 @@ export type ProgramPrefix = 'tools' | 'deals' | 'get' | 'start' | 'root'
 
 export interface Program {
   id: number
+  parent_id: number | null
   name: string
   slug: string
   category: string
@@ -33,9 +34,18 @@ export interface Program {
 
 export type HealthStatus = 'unchecked' | 'ok' | 'dead'
 
+export interface LinkedProgram {
+  id: number
+  name: string
+  icon: string
+  color: string
+  slug: string
+}
+
 export interface ReferralLink {
   id: number
   program_id: number
+  program?: LinkedProgram
   url: string
   status: LinkStatus
   position: number
@@ -100,6 +110,15 @@ export interface AnalyticsData {
   totals: AnalyticsTotals
 }
 
+export interface PaginatedMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+  from: number | null
+  to: number | null
+}
+
 export interface PostbackEvent {
   id: number
   program_id: number
@@ -123,6 +142,7 @@ export interface ProgramFormData {
   low_queue_threshold: number
   critical_queue_threshold: number
   initial_links?: string
+  parent_id?: number | null
   // Flags — not shown in the create/edit form but sent via patch
   is_active?: boolean
   is_public?: boolean

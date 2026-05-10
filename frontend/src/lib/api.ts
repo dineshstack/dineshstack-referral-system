@@ -9,7 +9,7 @@ import type {
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000',
   headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-  withCredentials: true,
+  withCredentials: false,
 })
 
 // Attach Sanctum token from env (set after php artisan db:seed)
@@ -91,6 +91,34 @@ export async function removeLink(
   linkId: number,
 ): Promise<{ message: string; queue_count: number }> {
   const res = await api.delete(`/api/programs/${programId}/links/${linkId}`)
+  return res.data
+}
+
+export async function requeueLink(
+  programId: number,
+  linkId: number,
+): Promise<{ message: string; queue_count: number }> {
+  const res = await api.patch(`/api/programs/${programId}/links/${linkId}/requeue`)
+  return res.data
+}
+
+// ── All links (paginated) ─────────────────────────────────────────────────────
+
+interface LinksFilter {
+  program_id?: number
+  status?: string
+  health?: string
+  search?: string
+  page?: number
+  per_page?: number
+  sort?: string
+  dir?: 'asc' | 'desc'
+}
+
+export async function getAllLinks(
+  filters: LinksFilter = {},
+): Promise<{ data: import('@/types').ReferralLink[]; meta: import('@/types').PaginatedMeta }> {
+  const res = await api.get('/api/links', { params: filters })
   return res.data
 }
 

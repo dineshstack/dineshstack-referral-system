@@ -11,6 +11,7 @@ class ProgramResource extends JsonResource
     {
         return [
             'id'                      => $this->id,
+            'parent_id'               => $this->parent_id,
             'name'                    => $this->name,
             'slug'                    => $this->slug,
             'category'                => $this->category,
@@ -22,6 +23,7 @@ class ProgramResource extends JsonResource
             'low_queue_threshold'      => $this->low_queue_threshold,
             'critical_queue_threshold' => $this->critical_queue_threshold,
             'is_active'               => $this->is_active,
+            'is_public'               => $this->is_public,
             'prefix'                  => $this->prefix,
             'embed_url'               => $this->embed_url,
             'total_clicks'            => $this->total_clicks,

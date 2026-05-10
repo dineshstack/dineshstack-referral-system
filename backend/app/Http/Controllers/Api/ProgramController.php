@@ -137,6 +137,31 @@ class ProgramController extends Controller
         ]);
     }
 
+    // ── PATCH /api/programs/{program}/links/{linkId}/requeue ───────────────────
+    public function requeueLink(Program $program, int $linkId): JsonResponse
+    {
+        $link = $program->links()->findOrFail($linkId);
+
+        if (!in_array($link->status, ['used', 'expired'])) {
+            return response()->json(['message' => 'Only used or expired links can be re-queued.'], 422);
+        }
+
+        $hasActive = $program->links()->where('status', 'active')->exists();
+
+        if ($hasActive) {
+            $link->update(['status' => 'queued', 'used_at' => null, 'expires_at' => null]);
+            $msg = 'Link re-queued successfully.';
+        } else {
+            $link->update(['status' => 'active', 'used_at' => null, 'expires_at' => null, 'activated_at' => now()]);
+            $msg = 'Link restored and set as active (no active link existed).';
+        }
+
+        return response()->json([
+            'message'     => $msg,
+            'queue_count' => $program->fresh()->queueCount(),
+        ]);
+    }
+
     // ── GET /api/analytics ─────────────────────────────────────────────────────
     public function analytics(Request $request): JsonResponse
     {

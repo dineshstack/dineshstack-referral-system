@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { ArrowLeft, Copy, Check, ExternalLink, Plus, X, RotateCw, Bot, Clock, HeartPulse } from 'lucide-react'
-import { getProgram, getLinks, removeLink, addLinks } from '@/lib/api'
+import { getProgram, getLinks, removeLink, addLinks, requeueLink } from '@/lib/api'
 import { type Program, type ReferralLink, type ClickEvent, type LinkStatus } from '@/types'
 import { buildRedirectUrl, formatDate, formatDateTime } from '@/lib/utils'
 import { AddLinksModal } from '@/components/add-links-modal'
@@ -63,6 +63,17 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
       load()
     } catch {
       toast.error('Remove failed')
+    }
+  }
+
+  async function handleRequeue(linkId: number) {
+    if (!confirm('Re-queue this link? It will go back into the queue (or become active if no active link exists).')) return
+    try {
+      const res = await requeueLink(id, linkId)
+      toast.success(res.message)
+      load()
+    } catch {
+      toast.error('Re-queue failed')
     }
   }
 
@@ -177,7 +188,7 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
             <div className="overflow-x-auto">
               <Tabs value={filter} onValueChange={v => setFilter(v as FilterTab)}>
                 <TabsList className="h-8">
-                  {(['all', 'active', 'queued', 'used'] as const).map(f => (
+                  {(['all', 'active', 'queued', 'used', 'expired'] as const).map(f => (
                     <TabsTrigger key={f} value={f} className="text-xs px-2.5 h-7">
                       {f} ({counts[f]})
                     </TabsTrigger>
@@ -219,6 +230,17 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
                           onClick={() => handleRemove(link.id, link.status)}
                         >
                           <X className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                      {(link.status === 'used' || link.status === 'expired') && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-emerald-600 hover:text-emerald-700 shrink-0"
+                          onClick={() => handleRequeue(link.id)}
+                          title="Re-queue this link"
+                        >
+                          <RotateCw className="h-3.5 w-3.5" />
                         </Button>
                       )}
                     </div>
@@ -283,6 +305,17 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
                           onClick={() => handleRemove(link.id, link.status)}
                         >
                           <X className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                      {(link.status === 'used' || link.status === 'expired') && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-emerald-600 hover:text-emerald-700"
+                          onClick={() => handleRequeue(link.id)}
+                          title="Re-queue this link"
+                        >
+                          <RotateCw className="h-3.5 w-3.5" />
                         </Button>
                       )}
                     </span>

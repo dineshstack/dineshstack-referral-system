@@ -22,6 +22,13 @@ class ReferralLinkResource extends JsonResource
             'health_status'     => $this->health_status,
             'health_checked_at' => $this->health_checked_at?->toIso8601String(),
             'created_at'        => $this->created_at?->toIso8601String(),
+            'program'           => $this->whenLoaded('program', fn () => [
+                'id'    => $this->program->id,
+                'name'  => $this->program->name,
+                'icon'  => $this->program->icon,
+                'color' => $this->program->color,
+                'slug'  => $this->program->slug,
+            ]),
         ];
     }
 }

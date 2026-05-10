@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart3, LinkIcon, ExternalLink, LogOut, X } from 'lucide-react'
+import { BarChart3, LinkIcon, List, ExternalLink, LogOut, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -11,6 +11,7 @@ import { logout } from '@/lib/api'
 
 const navItems = [
   { href: '/',          icon: LinkIcon,  label: 'Programs'  },
+  { href: '/links',     icon: List,      label: 'All Links' },
   { href: '/analytics', icon: BarChart3, label: 'Analytics' },
 ]
 

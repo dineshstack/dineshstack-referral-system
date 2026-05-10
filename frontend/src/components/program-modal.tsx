@@ -17,11 +17,11 @@ const CATEGORIES = ['Hosting', 'Domain', 'VPN', 'SaaS Tool', 'Design', 'SEO Tool
 const COLORS      = ['#f97316', '#3b82f6', '#8b5cf6', '#22c55e', '#ec4899', '#06b6d4', '#f59e0b', '#ef4444']
 
 const PREFIX_OPTIONS: { value: ProgramPrefix; label: string; example: string }[] = [
-  { value: 'tools', label: '/tools/',  example: 'dineshstack.com/tools/hosting' },
-  { value: 'deals', label: '/deals/',  example: 'dineshstack.com/deals/vpn' },
-  { value: 'get',   label: '/get/',    example: 'dineshstack.com/get/server' },
-  { value: 'start', label: '/start/',  example: 'dineshstack.com/start/hosting' },
-  { value: 'root',  label: '/ (root)', example: 'dineshstack.com/hosting' },
+  { value: 'tools', label: '/tools/',   example: 'dineshstack.com/tools/hosting' },
+  { value: 'deals', label: '/deals/',   example: 'dineshstack.com/deals/vpn'     },
+  { value: 'get',   label: '/get/',     example: 'dineshstack.com/get/server'    },
+  { value: 'start', label: '/start/',   example: 'dineshstack.com/start/hosting' },
+  { value: 'root',  label: '/ (root)',  example: 'dineshstack.com/hosting'       },
 ]
 
 const EMPTY_FORM: ProgramFormData = {
@@ -30,16 +30,19 @@ const EMPTY_FORM: ProgramFormData = {
   prefix: 'tools',
   affiliate_dashboard_url: '', low_queue_threshold: 3,
   critical_queue_threshold: 1, initial_links: '',
+  parent_id: null,
 }
 
 interface ProgramModalProps {
   open: boolean
   program: Program | null
+  programs: Program[]
+  defaultParentId?: number | null
   onSave: (data: ProgramFormData, id?: number) => Promise<void>
   onClose: () => void
 }
 
-export function ProgramModal({ open, program, onSave, onClose }: ProgramModalProps) {
+export function ProgramModal({ open, program, programs, defaultParentId, onSave, onClose }: ProgramModalProps) {
   const editing = !!program
   const [form, setForm]     = useState<ProgramFormData>(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
@@ -60,12 +63,13 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
         low_queue_threshold:      program.low_queue_threshold,
         critical_queue_threshold: program.critical_queue_threshold,
         initial_links:            '',
+        parent_id:               program.parent_id ?? null,
       })
     } else {
-      setForm(EMPTY_FORM)
+      setForm({ ...EMPTY_FORM, parent_id: defaultParentId ?? null })
     }
     setErrors({})
-  }, [program, open])
+  }, [program, open, defaultParentId])
 
   function set<K extends keyof ProgramFormData>(field: K, val: ProgramFormData[K]) {
     setForm(f => ({ ...f, [field]: val }))
@@ -95,6 +99,10 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
     }
   }
 
+  // Programs that can serve as parents: top-level only, not this program itself
+  const hasChildren   = programs.some(p => p.parent_id === program?.id)
+  const parentOptions = programs.filter(p => p.parent_id === null && p.id !== program?.id)
+
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -103,6 +111,7 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
         </DialogHeader>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
+
           {/* Name */}
           <div className="col-span-2 space-y-1.5">
             <Label htmlFor="name">Program Name *</Label>
@@ -110,7 +119,7 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
               id="name"
               value={form.name}
               onChange={e => handleNameChange(e.target.value)}
-              placeholder="e.g. Hostinger"
+              placeholder="e.g. Hostinger VPS"
               className={errors.name ? 'border-destructive' : ''}
             />
             {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
@@ -157,6 +166,39 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
                     : `${base}/${form.prefix}/${form.slug}`
                 })()}
               </code>
+            </div>
+          )}
+
+          {/* Parent Program */}
+          {!hasChildren ? (
+            <div className="col-span-2 space-y-1.5">
+              <Label>
+                Parent Program{' '}
+                <span className="text-muted-foreground font-normal">(optional — for grouping)</span>
+              </Label>
+              <Select
+                value={form.parent_id === null ? '' : String(form.parent_id)}
+                onValueChange={v => set('parent_id', v === '' ? null : parseInt(v))}
+              >
+                <SelectTrigger><SelectValue placeholder="None — standalone program" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">None — standalone program</SelectItem>
+                  {parentOptions.map(p => (
+                    <SelectItem key={p.id} value={String(p.id)}>
+                      {p.icon} {p.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Group this under a parent — e.g. "Hostinger VPS" under "Hostinger"
+              </p>
+            </div>
+          ) : (
+            <div className="col-span-2 rounded-lg border bg-muted/40 px-3 py-2">
+              <p className="text-xs text-muted-foreground">
+                This program has sub-programs and cannot itself be assigned a parent.
+              </p>
             </div>
           )}
 
@@ -254,8 +296,8 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
                   onClick={() => set('color', c)}
                   className="h-7 w-7 rounded-full ring-offset-background transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   style={{
-                    background: c,
-                    outline: form.color === c ? `2px solid ${c}` : undefined,
+                    background:    c,
+                    outline:       form.color === c ? `2px solid ${c}` : undefined,
                     outlineOffset: form.color === c ? '2px' : undefined,
                   }}
                 />
@@ -267,14 +309,15 @@ export function ProgramModal({ open, program, onSave, onClose }: ProgramModalPro
           {!editing && (
             <div className="col-span-2 space-y-1.5">
               <Label htmlFor="initial-links">
-                Initial Links <span className="text-muted-foreground font-normal">(one per line or comma-separated, optional)</span>
+                Initial Links{' '}
+                <span className="text-muted-foreground font-normal">(one per line or comma-separated, optional)</span>
               </Label>
               <Textarea
                 id="initial-links"
                 rows={4}
                 value={form.initial_links ?? ''}
                 onChange={e => set('initial_links', e.target.value)}
-                placeholder={'https://hostinger.com?ref=CODE_001\nhttps://hostinger.com?ref=CODE_002\n\nor comma-separated:\nhttps://hostinger.com?ref=001, https://hostinger.com?ref=002'}
+                placeholder={'https://hostinger.com?ref=CODE_001\nhttps://hostinger.com?ref=CODE_002'}
               />
             </div>
           )}
