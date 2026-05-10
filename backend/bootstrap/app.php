@@ -31,6 +31,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(SendDailyDigest::class)->dailyAt('08:00');
     })
     ->withMiddleware(function (Middleware $middleware): void {
+        // Prepend CORS middleware so it runs before everything else,
+        // including authentication — this ensures preflight OPTIONS
+        // requests always get the correct Access-Control-Allow-Origin header.
+        $middleware->prepend(\Illuminate\Http\Middleware\HandleCors::class);
+
         // This project uses Sanctum *token* auth (Authorization: Bearer …), not SPA
         // cookie auth — so EnsureFrontendRequestsAreStateful must NOT be added to the
         // api group, otherwise Laravel enables CSRF verification for requests from the
