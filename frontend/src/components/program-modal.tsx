@@ -177,12 +177,12 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
                 <span className="text-muted-foreground font-normal">(optional — for grouping)</span>
               </Label>
               <Select
-                value={form.parent_id === null ? '' : String(form.parent_id)}
-                onValueChange={v => set('parent_id', v === '' ? null : parseInt(v))}
+                value={form.parent_id === null ? 'none' : String(form.parent_id)}
+                onValueChange={v => set('parent_id', v === 'none' ? null : parseInt(v))}
               >
                 <SelectTrigger><SelectValue placeholder="None — standalone program" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None — standalone program</SelectItem>
+                  <SelectItem value="none">None — standalone program</SelectItem>
                   {parentOptions.map(p => (
                     <SelectItem key={p.id} value={String(p.id)}>
                       {p.icon} {p.name}

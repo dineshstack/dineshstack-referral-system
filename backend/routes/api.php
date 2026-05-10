@@ -22,21 +22,21 @@ Route::post('postback', [PostbackController::class, 'receive']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::post('logout',  [AuthController::class, 'logout']);
-    Route::get ('user',    [AuthController::class, 'user']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('user', [AuthController::class, 'user']);
 
     // Programs CRUD
     Route::apiResource('programs', ProgramController::class);
 
     // Link queue management
-    Route::get   ('programs/{program}/links',          [ProgramController::class, 'getLinks']);
-    Route::post  ('programs/{program}/links',          [ProgramController::class, 'addLinks']);
-    Route::delete('programs/{program}/links/{linkId}',          [ProgramController::class, 'removeLink']);
-    Route::patch ('programs/{program}/links/{linkId}/requeue',  [ProgramController::class, 'requeueLink']);
+    Route::get('programs/{program}/links', [ProgramController::class, 'getLinks']);
+    Route::post('programs/{program}/links', [ProgramController::class, 'addLinks']);
+    Route::delete('programs/{program}/links/{linkId}', [ProgramController::class, 'removeLink']);
+    Route::patch('programs/{program}/links/{linkId}/requeue', [ProgramController::class, 'requeueLink']);
 
     // Analytics
     Route::get('analytics', [ProgramController::class, 'analytics']);
 
     // All links across all programs — paginated + filterable
-    Route::get('links', [LinksController::class, 'index']);
+    Route::get('all-links', [LinksController::class, 'index']);
 });

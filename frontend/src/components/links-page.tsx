@@ -66,7 +66,7 @@ export function LinksPage() {
   // Filters
   const [search, setSearch]           = useState('')
   const [debouncedSearch, setDebounced] = useState('')
-  const [programId, setProgramId]     = useState('')
+  const [programId, setProgramId]     = useState('all')
   const [status, setStatus]           = useState('')
   const [health, setHealth]           = useState('')
   const [page, setPage]               = useState(1)
@@ -87,10 +87,10 @@ export function LinksPage() {
     try {
       const res = await getAllLinks({
         page, per_page: perPage, sort, dir,
-        ...(debouncedSearch ? { search: debouncedSearch } : {}),
-        ...(programId       ? { program_id: parseInt(programId) } : {}),
-        ...(status          ? { status } : {}),
-        ...(health          ? { health } : {}),
+        ...(debouncedSearch            ? { search: debouncedSearch } : {}),
+        ...(programId && programId !== 'all' ? { program_id: parseInt(programId) } : {}),
+        ...(status                     ? { status } : {}),
+        ...(health                     ? { health } : {}),
       })
       setLinks(res.data)
       setMeta(res.meta)
@@ -180,7 +180,7 @@ export function LinksPage() {
                 <SelectValue placeholder="All Programs" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Programs</SelectItem>
+                <SelectItem value="all">All Programs</SelectItem>
                 {programs.map(p => (
                   <SelectItem key={p.id} value={String(p.id)}>
                     {p.icon} {p.name}

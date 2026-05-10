@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Pages that belong to the Next.js admin app — never touch these
-const ADMIN_PATHS = new Set(['login', 'analytics', 'programs'])
+const ADMIN_PATHS = new Set(['login', 'analytics', 'programs', 'links'])
 
 // Affiliate redirect URL prefixes defined in routes/web.php
 const REDIRECT_PREFIXES = new Set(['tools', 'deals', 'get', 'start', 'go'])
