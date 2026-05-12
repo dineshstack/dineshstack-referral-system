@@ -34,9 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('programs/{program}/links/{linkId}', [ProgramController::class, 'removeLink']);
     Route::patch('programs/{program}/links/{linkId}/requeue', [ProgramController::class, 'requeueLink']);
 
+    // Per-program click trends (sparklines) — must be before apiResource to avoid {program} binding
+    Route::get('program-trends', [ProgramController::class, 'trends']);
+
     // Analytics
     Route::get('analytics', [ProgramController::class, 'analytics']);
 
     // All links across all programs — paginated + filterable
-    Route::get('all-links', [LinksController::class, 'index']);
+    Route::get('links', [LinksController::class, 'index']);
 });

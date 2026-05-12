@@ -87,6 +87,7 @@ export function AddLinksModal({ open, program, onAdd, onClose }: AddLinksModalPr
           <Textarea
             id="links-input"
             rows={8}
+            dir="ltr"
             placeholder={`https://${program.slug}.com?ref=YOURCODE_001\nhttps://${program.slug}.com?ref=YOURCODE_002`}
             value={raw}
             onChange={e => { setRaw(e.target.value); setError('') }}

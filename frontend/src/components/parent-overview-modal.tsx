@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { ExternalLink, Eye, Plus, Pencil } from 'lucide-react'
+import { ExternalLink, Eye, Plus, Pencil, KeyRound, Gift } from 'lucide-react'
 import { type Program } from '@/types'
 import { formatNumber } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -79,7 +79,7 @@ export function ParentOverviewModal({
           </div>
 
           {/* Shared fields */}
-          {(parent.affiliate_dashboard_url || parent.commission) && (
+          {(parent.affiliate_dashboard_url || parent.commission || parent.referral_benefit || parent.login_email || parent.login_password || parent.login_method) && (
             <div className="rounded-lg border bg-card p-4 space-y-3">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Shared Data</p>
 
@@ -102,6 +102,43 @@ export function ParentOverviewModal({
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground">Commission Rate</p>
                   <p className="text-sm font-semibold">{parent.commission}</p>
+                </div>
+              )}
+
+              {parent.referral_benefit && (
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Gift className="h-3 w-3" /> Visitor Benefit
+                  </p>
+                  <p className="text-sm">{parent.referral_benefit}</p>
+                </div>
+              )}
+
+              {(parent.login_email || parent.login_password || parent.login_method) && (
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <KeyRound className="h-3 w-3" /> Affiliate Login
+                  </p>
+                  <div className="grid grid-cols-1 gap-1.5 rounded-md border bg-muted/40 p-2.5">
+                    {parent.login_method && (
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-muted-foreground w-16 shrink-0">Method</span>
+                        <span className="font-medium">{parent.login_method}</span>
+                      </div>
+                    )}
+                    {parent.login_email && (
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-muted-foreground w-16 shrink-0">Email</span>
+                        <span className="font-mono">{parent.login_email}</span>
+                      </div>
+                    )}
+                    {parent.login_password && (
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-muted-foreground w-16 shrink-0">Password</span>
+                        <span className="font-mono">{parent.login_password}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

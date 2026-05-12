@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart3, LinkIcon, List, ExternalLink, LogOut, X } from 'lucide-react'
+import { BarChart3, LinkIcon, List, ExternalLink, LogOut, X, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { logout } from '@/lib/api'
+import { LocaleToggle } from '@/components/locale-toggle'
 
 const navItems = [
   { href: '/',          icon: LinkIcon,  label: 'Programs'  },
@@ -42,7 +43,7 @@ export function AppSidebar({ onClose }: AppSidebarProps) {
   }
 
   return (
-    <aside className="flex h-screen w-60 flex-col border-r bg-sidebar">
+    <aside className="flex h-screen w-60 flex-col border-r rtl:border-r-0 rtl:border-l bg-sidebar">
 
       {/* Logo + optional close button (mobile) */}
       <div className="flex items-center gap-3 px-5 py-5">
@@ -96,6 +97,21 @@ export function AppSidebar({ onClose }: AppSidebarProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <a
+              href="/deals"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-xs text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0" />
+              Public deals page
+            </a>
+          </TooltipTrigger>
+          <TooltipContent side="right">Preview your public /deals page</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <a
               href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:8000'}/tools/hostinger`}
               target="_blank"
               rel="noreferrer"
@@ -107,6 +123,8 @@ export function AppSidebar({ onClose }: AppSidebarProps) {
           </TooltipTrigger>
           <TooltipContent side="right">Open /tools/hostinger in new tab</TooltipContent>
         </Tooltip>
+
+        <LocaleToggle />
 
         <button
           onClick={handleLogout}

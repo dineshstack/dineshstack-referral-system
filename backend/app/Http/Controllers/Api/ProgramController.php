@@ -162,6 +162,21 @@ class ProgramController extends Controller
         ]);
     }
 
+    // ── GET /api/program-trends ────────────────────────────────────────────────
+    public function trends(Request $request): JsonResponse
+    {
+        $days = min((int) $request->input('days', 7), 30);
+
+        $rows = ClickEvent::selectRaw('program_id, DATE(created_at) as date, COUNT(*) as clicks')
+            ->where('created_at', '>=', now()->subDays($days))
+            ->where('is_bot', false)
+            ->groupByRaw('program_id, DATE(created_at)')
+            ->orderBy('date')
+            ->get();
+
+        return response()->json(['data' => $rows]);
+    }
+
     // ── GET /api/analytics ─────────────────────────────────────────────────────
     public function analytics(Request $request): JsonResponse
     {
@@ -196,6 +211,23 @@ class ProgramController extends Controller
             ->limit(10)
             ->get();
 
+        $utmMediums = ClickEvent::selectRaw('COALESCE(utm_medium, "(none)") as medium, COUNT(*) as count')
+            ->where('is_bot', false)
+            ->where('created_at', '>=', $since)
+            ->groupBy('medium')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
+        $utmCampaigns = ClickEvent::selectRaw('COALESCE(utm_campaign, "(none)") as campaign, COUNT(*) as count')
+            ->where('is_bot', false)
+            ->whereNotNull('utm_campaign')
+            ->where('created_at', '>=', $since)
+            ->groupBy('campaign')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
         $topCountries = ClickEvent::selectRaw('country, COUNT(*) as count')
             ->whereNotNull('country')
             ->where('is_bot', false)
@@ -213,6 +245,8 @@ class ProgramController extends Controller
             'clicks_per_day' => $clicksPerDay,
             'top_referers'   => $topReferers,
             'utm_sources'    => $utmSources,
+            'utm_mediums'    => $utmMediums,
+            'utm_campaigns'  => $utmCampaigns,
             'top_countries'  => $topCountries,
             'totals'         => [
                 'clicks'      => $allClicks,

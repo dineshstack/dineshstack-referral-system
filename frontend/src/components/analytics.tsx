@@ -7,7 +7,7 @@ import { getAnalytics } from '@/lib/api'
 import { type AnalyticsData } from '@/types'
 import { formatNumber, formatCurrency } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 
@@ -43,10 +43,10 @@ export function AnalyticsPage() {
 
   if (!data) return null
 
-  const { totals, programs, clicks_per_day, top_referers, utm_sources, top_countries } = data
+  const { totals, programs, clicks_per_day, top_referers, utm_sources, utm_mediums, utm_campaigns, top_countries } = data
   const maxClicks   = Math.max(...programs.map(p => p.total_clicks), 1)
   const maxDay      = Math.max(...clicks_per_day.map(d => d.clicks), 1)
-  const maxUtm      = Math.max(...utm_sources.map(u => u.count), 1)
+  const maxUtm      = Math.max(...utm_sources.map(u => u.count), ...utm_mediums.map(u => u.count), 1)
   const maxCountry  = Math.max(...top_countries.map(c => c.count), 1)
 
   const botPct = totals.clicks > 0
@@ -184,32 +184,72 @@ export function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        {/* UTM Sources */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Traffic Sources (UTM)</CardTitle>
+        {/* UTM Breakdown */}
+        <Card className="md:col-span-1">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">UTM Breakdown</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {utm_sources.length === 0 ? (
-              <p className="text-center text-muted-foreground py-6 text-sm">
-                No UTM data yet — add <code className="text-xs">?utm_source=blog</code> to your links
-              </p>
-            ) : (
-              utm_sources.map((u, i) => (
-                <div key={i} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="truncate text-muted-foreground">{u.source}</span>
-                    <span className="font-medium shrink-0 ml-2">{formatNumber(u.count)}</span>
+          <CardContent>
+            <Tabs defaultValue="source">
+              <TabsList className="h-7 mb-3">
+                <TabsTrigger value="source"   className="text-xs px-2.5 h-6">Source</TabsTrigger>
+                <TabsTrigger value="medium"   className="text-xs px-2.5 h-6">Medium</TabsTrigger>
+                <TabsTrigger value="campaign" className="text-xs px-2.5 h-6">Campaign</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="source" className="mt-0 space-y-2">
+                {utm_sources.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-4 text-xs">
+                    No UTM data yet — use the Share button on programs
+                  </p>
+                ) : utm_sources.map((u, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="truncate text-muted-foreground">{u.source}</span>
+                      <span className="font-medium shrink-0 ml-2">{formatNumber(u.count)}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-violet-500/70 transition-all"
+                           style={{ width: `${(u.count / maxUtm) * 100}%` }} />
+                    </div>
                   </div>
-                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-violet-500/70 transition-all"
-                      style={{ width: `${(u.count / maxUtm) * 100}%` }}
-                    />
+                ))}
+              </TabsContent>
+
+              <TabsContent value="medium" className="mt-0 space-y-2">
+                {utm_mediums.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-4 text-xs">No medium data yet</p>
+                ) : utm_mediums.map((u, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="truncate text-muted-foreground">{u.medium}</span>
+                      <span className="font-medium shrink-0 ml-2">{formatNumber(u.count)}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-blue-500/70 transition-all"
+                           style={{ width: `${(u.count / maxUtm) * 100}%` }} />
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
+                ))}
+              </TabsContent>
+
+              <TabsContent value="campaign" className="mt-0 space-y-2">
+                {utm_campaigns.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-4 text-xs">No campaign data yet</p>
+                ) : utm_campaigns.map((u, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="truncate text-muted-foreground">{u.campaign}</span>
+                      <span className="font-medium shrink-0 ml-2">{formatNumber(u.count)}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-emerald-500/70 transition-all"
+                           style={{ width: `${(u.count / Math.max(...utm_campaigns.map(c => c.count), 1)) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
 

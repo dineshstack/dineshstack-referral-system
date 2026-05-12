@@ -24,7 +24,11 @@ export function proxy(request: NextRequest) {
   const isPrefixedRedirect = REDIRECT_PREFIXES.has(first) && segments.length === 2
 
   // /{slug}  — root-level redirect (e.g. /vps2-hosting, /hosting)
-  const isRootSlug = segments.length === 1 && /^[a-z0-9][a-z0-9\-]+$/.test(first)
+  // Exclude bare prefix words (/deals, /tools, /get …) — those are Next.js pages when alone
+  const isRootSlug = segments.length === 1
+    && /^[a-z0-9][a-z0-9\-]+$/.test(first)
+    && !REDIRECT_PREFIXES.has(first)
+    && !ADMIN_PATHS.has(first)
 
   if (isPrefixedRedirect || isRootSlug) {
     const apiBase = (process.env.NEXT_PUBLIC_API_URL ?? '')

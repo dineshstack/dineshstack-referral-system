@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Cairo } from 'next/font/google'
 import './globals.css'
 import { Toaster } from '@/components/ui/sonner'
-import { AppSidebar } from '@/components/app-sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AuthGuard } from '@/components/auth-guard'
 import { AppShell } from '@/components/app-shell'
+import { LocaleProvider } from '@/lib/locale'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const inter = Inter({ subsets: ['latin'],          variable: '--font-inter' })
+const cairo = Cairo({ subsets: ['arabic', 'latin'], variable: '--font-cairo', display: 'swap' })
 
 export const metadata: Metadata = {
   title: 'DineshStack Referral Manager',
@@ -18,20 +19,22 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+    { media: '(prefers-color-scheme: dark)',  color: '#09090b' },
   ],
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        <TooltipProvider>
-          <AuthGuard>
-            <AppShell>{children}</AppShell>
-          </AuthGuard>
-          <Toaster richColors position="top-right" />
-        </TooltipProvider>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <body className={`${inter.variable} ${cairo.variable} font-sans antialiased`}>
+        <LocaleProvider>
+          <TooltipProvider>
+            <AuthGuard>
+              <AppShell>{children}</AppShell>
+            </AuthGuard>
+            <Toaster richColors position="top-right" />
+          </TooltipProvider>
+        </LocaleProvider>
       </body>
     </html>
   )

@@ -8,6 +8,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\LinkHealthCheck;
 use App\Models\ReferralLink;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -45,20 +46,29 @@ class CheckLinkHealth extends Command
         $deadCount  = 0;
 
         foreach ($links as $link) {
-            $healthy = $this->isHealthy($link->url);
+            $result  = $this->checkLink($link->url);
+            $healthy = $result['healthy'];
 
             $link->update([
-                'health_status'    => $healthy ? 'ok' : 'dead',
+                'health_status'     => $healthy ? 'ok' : 'dead',
                 'health_checked_at' => now(),
+            ]);
+
+            LinkHealthCheck::create([
+                'link_id'          => $link->id,
+                'checked_at'       => now(),
+                'is_healthy'       => $healthy,
+                'status_code'      => $result['status_code'],
+                'response_time_ms' => $result['response_time_ms'],
             ]);
 
             if ($healthy) {
                 $okCount++;
-                $this->line("  ✓ {$link->url}");
+                $this->line("  ✓ [{$result['status_code']}] {$link->url} ({$result['response_time_ms']}ms)");
             } else {
                 $deadCount++;
                 $deadLinks[] = $link;
-                $this->warn("  ✗ DEAD [{$link->program->slug}] {$link->url}");
+                $this->warn("  ✗ DEAD [{$result['status_code']}] [{$link->program->slug}] {$link->url}");
                 Log::warning("CheckLinkHealth: dead link #{$link->id} [{$link->program->slug}] {$link->url}");
             }
         }
@@ -72,8 +82,10 @@ class CheckLinkHealth extends Command
         return Command::SUCCESS;
     }
 
-    private function isHealthy(string $url): bool
+    /** @return array{healthy: bool, status_code: int|null, response_time_ms: int|null} */
+    private function checkLink(string $url): array
     {
+        $start = microtime(true);
         try {
             // Use GET with a 0-byte range instead of HEAD — some servers reject HEAD.
             // withoutVerifying() avoids SSL errors on misconfigured affiliate URLs.
@@ -82,10 +94,16 @@ class CheckLinkHealth extends Command
                 ->withHeaders(['Range' => 'bytes=0-0'])
                 ->get($url);
 
+            $ms = (int) round((microtime(true) - $start) * 1000);
+
             // 2xx or 3xx = alive. 4xx (404, 410) = dead. 5xx = server error (treat as dead).
-            return $response->status() < 400;
+            return [
+                'healthy'          => $response->status() < 400,
+                'status_code'      => $response->status(),
+                'response_time_ms' => $ms,
+            ];
         } catch (\Throwable) {
-            return false;
+            return ['healthy' => false, 'status_code' => null, 'response_time_ms' => null];
         }
     }
 

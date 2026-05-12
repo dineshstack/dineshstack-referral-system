@@ -3,6 +3,8 @@ import type {
   AnalyticsData,
   Program,
   ProgramFormData,
+  ProgramTrend,
+  PublicProgram,
   ReferralLink,
 } from '@/types'
 
@@ -120,6 +122,26 @@ export async function getAllLinks(
 ): Promise<{ data: import('@/types').ReferralLink[]; meta: import('@/types').PaginatedMeta }> {
   const res = await api.get('/api/links', { params: filters })
   return res.data
+}
+
+// ── Program click trends (sparklines) ─────────────────────────────────────────
+
+export async function getProgramTrends(days = 7): Promise<ProgramTrend[]> {
+  const res = await api.get<{ data: ProgramTrend[] }>('/api/program-trends', { params: { days } })
+  return res.data.data
+}
+
+// ── Public (no auth) ──────────────────────────────────────────────────────────
+
+export async function getPublicPrograms(): Promise<PublicProgram[]> {
+  const base = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'
+  const res = await fetch(`${base}/api/public/programs`, {
+    headers: { Accept: 'application/json' },
+    cache: 'no-store',
+  })
+  if (!res.ok) throw new Error('Failed to load programs')
+  const json = await res.json()
+  return json.data
 }
 
 // ── Analytics ─────────────────────────────────────────────────────────────────

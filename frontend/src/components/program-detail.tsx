@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Copy, Check, ExternalLink, Plus, X, RotateCw, Bot, Clock, HeartPulse } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Copy, Check, ExternalLink, Plus, X, RotateCw, Bot, Clock, HeartPulse, Gift, KeyRound } from 'lucide-react'
 import { getProgram, getLinks, removeLink, addLinks, requeueLink } from '@/lib/api'
 import { type Program, type ReferralLink, type ClickEvent, type LinkStatus } from '@/types'
 import { buildRedirectUrl, formatDate, formatDateTime } from '@/lib/utils'
+import { useLocale } from '@/lib/locale'
 import { AddLinksModal } from '@/components/add-links-modal'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -29,6 +30,8 @@ interface ProgramDetailPageProps {
 
 export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
   const router = useRouter()
+  const { isRTL } = useLocale()
+  const BackIcon = isRTL ? ArrowRight : ArrowLeft
   const [program, setProgram]           = useState<Program | null>(null)
   const [links, setLinks]               = useState<ReferralLink[]>([])
   const [recentClicks, setRecentClicks] = useState<ClickEvent[]>([])
@@ -129,7 +132,7 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => router.push('/')}>
-            <ArrowLeft className="h-4 w-4" /> Back
+            <BackIcon className="h-4 w-4" /> Back
           </Button>
           <div>
             <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2">
@@ -160,11 +163,70 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
         ))}
       </div>
 
+      {/* Program info: benefit + affiliate login */}
+      {(program.affiliate_dashboard_url || program.referral_benefit || program.login_email || program.login_password || program.login_method) && (
+        <div className="rounded-lg border bg-card p-4 space-y-3">
+          {program.affiliate_dashboard_url && (
+            <div className="flex items-start gap-2">
+              <ExternalLink className="h-3.5 w-3.5 mt-0.5 text-muted-foreground shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground mb-0.5">Affiliate Dashboard</p>
+                <a
+                  href={program.affiliate_dashboard_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm text-primary hover:underline break-all"
+                >
+                  {program.affiliate_dashboard_url}
+                </a>
+              </div>
+            </div>
+          )}
+          {program.referral_benefit && (
+            <div className="flex items-start gap-2">
+              <Gift className="h-3.5 w-3.5 mt-0.5 text-muted-foreground shrink-0" />
+              <div>
+                <p className="text-xs text-muted-foreground mb-0.5">Visitor Benefit</p>
+                <p className="text-sm">{program.referral_benefit}</p>
+              </div>
+            </div>
+          )}
+          {(program.login_email || program.login_password || program.login_method) && (
+            <div className="flex items-start gap-2">
+              <KeyRound className="h-3.5 w-3.5 mt-0.5 text-muted-foreground shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground mb-1">Affiliate Login</p>
+                <div className="rounded-md border bg-muted/40 px-2.5 py-2 space-y-1">
+                  {program.login_method && (
+                    <div className="flex gap-2 text-xs">
+                      <span className="text-muted-foreground w-16 shrink-0">Method</span>
+                      <span className="font-medium">{program.login_method}</span>
+                    </div>
+                  )}
+                  {program.login_email && (
+                    <div className="flex gap-2 text-xs">
+                      <span className="text-muted-foreground w-16 shrink-0">Email</span>
+                      <span className="font-mono">{program.login_email}</span>
+                    </div>
+                  )}
+                  {program.login_password && (
+                    <div className="flex gap-2 text-xs">
+                      <span className="text-muted-foreground w-16 shrink-0">Password</span>
+                      <span className="font-mono">{program.login_password}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Embed URL */}
       <div className="rounded-lg border bg-card p-4">
         <p className="text-xs font-medium text-muted-foreground mb-2">Your embed link (use this everywhere)</p>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <code className="flex-1 min-w-0 truncate rounded-md border bg-muted px-3 py-2 text-sm font-mono">
+          <code className="flex-1 min-w-0 truncate rounded-md border bg-muted px-3 py-2 text-sm font-mono" dir="ltr">
             {redirectUrl}
           </code>
           <div className="flex gap-2 shrink-0">
@@ -244,7 +306,7 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
                         </Button>
                       )}
                     </div>
-                    <p className="font-mono text-xs break-all text-muted-foreground">{link.url}</p>
+                    <p className="font-mono text-xs break-all text-muted-foreground" dir="ltr">{link.url}</p>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span>Added {formatDate(link.created_at)}</span>
                       {link.used_at && <span>Used {formatDate(link.used_at)}</span>}
@@ -277,7 +339,7 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
                   >
                     <span className="text-muted-foreground text-xs">{i + 1}</span>
                     <div className="min-w-0">
-                      <span className="truncate font-mono text-xs block">{link.url}</span>
+                      <span className="truncate font-mono text-xs block" dir="ltr">{link.url}</span>
                       {link.notes && (
                         <span className="text-[10px] text-muted-foreground truncate block">{link.notes}</span>
                       )}

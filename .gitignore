@@ -1,0 +1,8 @@
+backend/vendor
+backend/storage
+backend/app/.DS_Store
+backend/composer.lock
+backend/database/.DS_Store
+backend/.DS_Store
+backend/.env
+.DS_Store

@@ -5,14 +5,15 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Plus, AlertTriangle, AlertOctagon, Pencil } from 'lucide-react'
 import {
-  getPrograms, createProgram, updateProgram, deleteProgram, addLinks,
+  getPrograms, createProgram, updateProgram, deleteProgram, addLinks, getProgramTrends,
 } from '@/lib/api'
-import { type Program, type ProgramFormData } from '@/types'
+import { type Program, type ProgramFormData, type ProgramTrend } from '@/types'
 import { formatNumber } from '@/lib/utils'
 import { ProgramCard } from '@/components/program-card'
 import { ProgramModal } from '@/components/program-modal'
 import { AddLinksModal } from '@/components/add-links-modal'
 import { ParentOverviewModal } from '@/components/parent-overview-modal'
+import { UtmShareModal } from '@/components/utm-share-modal'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -20,22 +21,44 @@ import { Skeleton } from '@/components/ui/skeleton'
 export function DashboardPage() {
   const router = useRouter()
   const [programs, setPrograms]             = useState<Program[]>([])
+  const [sparklines, setSparklines]         = useState<Map<number, number[]>>(new Map())
   const [loading, setLoading]               = useState(true)
   const [showModal, setShowModal]           = useState(false)
   const [editTarget, setEditTarget]         = useState<Program | null>(null)
   const [addLinksTarget, setAddLinksTarget] = useState<Program | null>(null)
+  const [shareTarget, setShareTarget]       = useState<Program | null>(null)
   const [createParentId, setCreateParentId] = useState<number | null>(null)
   const [viewingParent, setViewingParent]   = useState<Program | null>(null)
 
   const load = useCallback(async () => {
     try {
-      setPrograms(await getPrograms())
+      const [progs, trends] = await Promise.all([getPrograms(), getProgramTrends(7)])
+      setPrograms(progs)
+      setSparklines(buildSparklines(trends, 7))
     } catch {
       toast.error('Failed to load programs')
     } finally {
       setLoading(false)
     }
   }, [])
+
+  function buildSparklines(trends: ProgramTrend[], days: number): Map<number, number[]> {
+    const dates = Array.from({ length: days }, (_, i) => {
+      const d = new Date()
+      d.setDate(d.getDate() - (days - 1 - i))
+      return d.toISOString().slice(0, 10)
+    })
+    const byProgram = new Map<number, Map<string, number>>()
+    for (const t of trends) {
+      if (!byProgram.has(t.program_id)) byProgram.set(t.program_id, new Map())
+      byProgram.get(t.program_id)!.set(t.date, t.clicks)
+    }
+    const result = new Map<number, number[]>()
+    for (const [id, dateMap] of byProgram) {
+      result.set(id, dates.map(d => dateMap.get(d) ?? 0))
+    }
+    return result
+  }
 
   useEffect(() => { load() }, [load])
   useEffect(() => {
@@ -250,18 +273,20 @@ export function DashboardPage() {
 
                 {/* Children grid */}
                 <div
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-3 sm:pl-5 border-l-2"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-3 sm:pl-5 rtl:pl-0 rtl:pr-3 rtl:sm:pr-5 border-l-2 rtl:border-l-0 rtl:border-r-2"
                   style={{ borderColor: (parent.color ?? '#f97316') + '50' }}
                 >
                   {children.map(p => (
                     <ProgramCard
                       key={p.id}
                       program={p}
+                      sparkline={sparklines.get(p.id)}
                       onEdit={() => openEdit(p)}
                       onDelete={() => handleDelete(p.id, p.name)}
                       onAddLinks={() => setAddLinksTarget(p)}
                       onViewDetail={() => router.push(`/programs/${p.id}`)}
                       onTogglePublic={() => handleTogglePublic(p)}
+                      onShare={() => setShareTarget(p)}
                     />
                   ))}
                   <button
@@ -294,6 +319,7 @@ export function DashboardPage() {
                   onAddLinks={() => setAddLinksTarget(p)}
                   onViewDetail={() => router.push(`/programs/${p.id}`)}
                   onTogglePublic={() => handleTogglePublic(p)}
+                  onShare={() => setShareTarget(p)}
                 />
               ))}
               <button
@@ -347,6 +373,14 @@ export function DashboardPage() {
           program={addLinksTarget}
           onAdd={links => handleAddLinks(addLinksTarget.id, links)}
           onClose={() => setAddLinksTarget(null)}
+        />
+      )}
+
+      {shareTarget && (
+        <UtmShareModal
+          open={!!shareTarget}
+          program={shareTarget}
+          onClose={() => setShareTarget(null)}
         />
       )}
     </div>

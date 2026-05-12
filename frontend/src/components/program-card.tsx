@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Eye, Plus, Pencil, Trash2, Globe, GlobeLock } from 'lucide-react'
+import { Copy, Check, Eye, Plus, Pencil, Trash2, Globe, GlobeLock, Share2 } from 'lucide-react'
 import { type Program } from '@/types'
 import { formatNumber } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
@@ -11,20 +11,24 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 interface ProgramCardProps {
   program: Program
+  sparkline?: number[]
   onEdit: () => void
   onDelete: () => void
   onAddLinks: () => void
   onViewDetail: () => void
   onTogglePublic: () => void
+  onShare: () => void
 }
 
 export function ProgramCard({
   program: p,
+  sparkline,
   onEdit,
   onDelete,
   onAddLinks,
   onViewDetail,
   onTogglePublic,
+  onShare,
 }: ProgramCardProps) {
   const [copied, setCopied] = useState(false)
   const redirectUrl = p.embed_url
@@ -41,9 +45,9 @@ export function ProgramCard({
   return (
     <Card className="relative overflow-hidden transition-shadow hover:shadow-md">
       {/* Color accent stripe */}
-      <div className="absolute left-0 top-0 h-full w-1" style={{ background: p.color ?? '#f97316' }} />
+      <div className="absolute left-0 rtl:left-auto rtl:right-0 top-0 h-full w-1" style={{ background: p.color ?? '#f97316' }} />
 
-      <CardContent className="pl-5 pt-5 pb-4">
+      <CardContent className="pl-5 rtl:pl-4 rtl:pr-5 pt-5 pb-4">
 
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
@@ -96,7 +100,7 @@ export function ProgramCard({
         <div className="mb-3">
           <p className="text-xs text-muted-foreground mb-1">Your embed link</p>
           <div className="flex items-center gap-1.5 rounded-md border bg-muted/50 px-2.5 py-1.5">
-            <code className="flex-1 truncate text-xs font-mono">{redirectUrl}</code>
+            <code className="flex-1 truncate text-xs font-mono" dir="ltr">{redirectUrl}</code>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={copyRedirect}>
@@ -113,7 +117,7 @@ export function ProgramCard({
         {/* Active affiliate link */}
         <div className="mb-4">
           <p className="text-xs text-muted-foreground mb-1">Active affiliate link</p>
-          <code className="block truncate text-xs font-mono text-muted-foreground rounded border bg-muted/30 px-2.5 py-1.5">
+          <code className="block truncate text-xs font-mono text-muted-foreground rounded border bg-muted/30 px-2.5 py-1.5" dir="ltr">
             {p.active_link_url ?? '— No active link —'}
           </code>
         </div>
@@ -133,6 +137,32 @@ export function ProgramCard({
           ))}
         </div>
 
+        {/* 7-day click sparkline */}
+        {sparkline && sparkline.length > 0 && (() => {
+          const max = Math.max(...sparkline, 1)
+          const total = sparkline.reduce((s, n) => s + n, 0)
+          return (
+            <div className="mb-3">
+              <div className="flex items-end gap-px h-5">
+                {sparkline.map((clicks, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-sm"
+                    style={{
+                      height: `${Math.max((clicks / max) * 100, clicks > 0 ? 15 : 8)}%`,
+                      background: clicks > 0 ? (p.color ?? '#f97316') : 'var(--muted)',
+                      opacity: clicks > 0 ? 0.75 : 0.3,
+                    }}
+                  />
+                ))}
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-0.5">
+                7d · {formatNumber(total)} clicks
+              </p>
+            </div>
+          )
+        })()}
+
         {/* Actions */}
         <div className="flex items-center gap-1.5">
           <Button size="sm" className="flex-1" onClick={onViewDetail}>
@@ -141,6 +171,14 @@ export function ProgramCard({
           <Button size="sm" variant="outline" onClick={onAddLinks}>
             <Plus className="h-3.5 w-3.5" /> Links
           </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="sm" variant="ghost" onClick={onShare}>
+                <Share2 className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Share with UTM</TooltipContent>
+          </Tooltip>
           <Button size="sm" variant="ghost" onClick={onEdit}>
             <Pencil className="h-3.5 w-3.5" />
           </Button>

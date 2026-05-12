@@ -15,6 +15,12 @@ export interface Program {
   prefix: ProgramPrefix
   embed_url: string
   affiliate_dashboard_url: string | null
+  referral_benefit: string | null
+  exclusive_note: string | null
+  last_verified_at: string | null
+  login_email: string | null
+  login_password: string | null
+  login_method: string | null
   low_queue_threshold: number
   critical_queue_threshold: number
   is_active: boolean
@@ -87,6 +93,22 @@ export interface UtmSource {
   count: number
 }
 
+export interface UtmMedium {
+  medium: string
+  count: number
+}
+
+export interface UtmCampaign {
+  campaign: string
+  count: number
+}
+
+export interface ProgramTrend {
+  program_id: number
+  date: string
+  clicks: number
+}
+
 export interface TopCountry {
   country: string
   count: number
@@ -106,6 +128,8 @@ export interface AnalyticsData {
   clicks_per_day: ClicksPerDay[]
   top_referers: TopReferer[]
   utm_sources: UtmSource[]
+  utm_mediums: UtmMedium[]
+  utm_campaigns: UtmCampaign[]
   top_countries: TopCountry[]
   totals: AnalyticsTotals
 }
@@ -117,6 +141,24 @@ export interface PaginatedMeta {
   total: number
   from: number | null
   to: number | null
+}
+
+export interface PublicProgram {
+  id: number
+  name: string
+  slug: string
+  category: string
+  icon: string
+  color: string
+  commission: string | null
+  link_type: 'onetime' | 'permanent'
+  prefix: string
+  embed_url: string
+  referral_benefit: string | null
+  exclusive_note: string | null
+  last_verified_at: string | null
+  total_clicks: number
+  clicks_30d: number
 }
 
 export interface PostbackEvent {
@@ -139,6 +181,12 @@ export interface ProgramFormData {
   link_type: LinkType
   prefix: ProgramPrefix
   affiliate_dashboard_url: string
+  referral_benefit?: string
+  exclusive_note?: string
+  last_verified_at?: string | null
+  login_email?: string
+  login_password?: string
+  login_method?: string
   low_queue_threshold: number
   critical_queue_threshold: number
   initial_links?: string

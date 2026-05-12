@@ -7,10 +7,10 @@ import { AppSidebar } from '@/components/app-sidebar'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname     = usePathname()
-  const isLogin      = pathname === '/login'
+  const isShell = pathname !== '/login' && pathname !== '/deals'
   const [open, setOpen] = useState(false)
 
-  if (isLogin) return <>{children}</>
+  if (!isShell) return <>{children}</>
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -27,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             className="fixed inset-0 z-40 bg-black/50 md:hidden"
             onClick={() => setOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 z-50 md:hidden">
+          <div className="fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-50 md:hidden">
             <AppSidebar onClose={() => setOpen(false)} />
           </div>
         </>

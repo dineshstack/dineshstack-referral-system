@@ -20,8 +20,12 @@ class PublicProgramResource extends JsonResource
             'link_type'  => $this->link_type,
             'prefix'     => $this->prefix,
             'embed_url'  => $this->embed_url,
-            'total_clicks' => $this->total_clicks,
-            'created_at' => $this->created_at?->toIso8601String(),
+            'referral_benefit'  => $this->referral_benefit,
+            'exclusive_note'    => $this->exclusive_note,
+            'last_verified_at'  => $this->last_verified_at?->toIso8601String(),
+            'total_clicks'      => $this->total_clicks,
+            'clicks_30d'        => $this->clicks_30d ?? 0,
+            'created_at'       => $this->created_at?->toIso8601String(),
         ];
     }
 }

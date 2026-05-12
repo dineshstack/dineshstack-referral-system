@@ -19,6 +19,11 @@ class PublicProgramController extends Controller
     {
         $programs = Program::where('is_active', true)
             ->where('is_public', true)
+            ->withCount([
+                'clickEvents as clicks_30d' => fn ($q) => $q
+                    ->where('created_at', '>=', now()->subDays(30))
+                    ->where('is_bot', false),
+            ])
             ->orderBy('name')
             ->get();
 

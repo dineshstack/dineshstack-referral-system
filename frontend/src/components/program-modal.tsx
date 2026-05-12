@@ -28,9 +28,11 @@ const EMPTY_FORM: ProgramFormData = {
   name: '', slug: '', category: 'Hosting', icon: '🔗',
   color: COLORS[0], commission: '', link_type: 'onetime',
   prefix: 'tools',
-  affiliate_dashboard_url: '', low_queue_threshold: 3,
-  critical_queue_threshold: 1, initial_links: '',
-  parent_id: null,
+  affiliate_dashboard_url: '', referral_benefit: '',
+  exclusive_note: '', last_verified_at: null,
+  login_email: '', login_password: '', login_method: '',
+  low_queue_threshold: 3, critical_queue_threshold: 1,
+  initial_links: '', parent_id: null,
 }
 
 interface ProgramModalProps {
@@ -60,6 +62,12 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
         link_type:               program.link_type,
         prefix:                  program.prefix ?? 'tools',
         affiliate_dashboard_url: program.affiliate_dashboard_url ?? '',
+        referral_benefit:        program.referral_benefit ?? '',
+        exclusive_note:          program.exclusive_note ?? '',
+        last_verified_at:        program.last_verified_at ?? null,
+        login_email:             program.login_email ?? '',
+        login_password:          program.login_password ?? '',
+        login_method:            program.login_method ?? '',
         low_queue_threshold:      program.low_queue_threshold,
         critical_queue_threshold: program.critical_queue_threshold,
         initial_links:            '',
@@ -283,6 +291,95 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
               onChange={e => set('affiliate_dashboard_url', e.target.value)}
               placeholder="https://hostinger.com/affiliates"
             />
+          </div>
+
+          {/* Referral benefit */}
+          <div className="col-span-2 space-y-1.5">
+            <Label htmlFor="referral-benefit">
+              Visitor Benefit{' '}
+              <span className="text-muted-foreground font-normal">(what others get via this link)</span>
+            </Label>
+            <Textarea
+              id="referral-benefit"
+              rows={2}
+              value={form.referral_benefit ?? ''}
+              onChange={e => set('referral_benefit', e.target.value)}
+              placeholder="e.g. 20% off first month + free domain for 1 year"
+            />
+          </div>
+
+          {/* Exclusive note + last verified */}
+          <div className="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="exclusive-note">
+                Exclusive Note{' '}
+                <span className="text-muted-foreground font-normal">(shown as badge on deals page)</span>
+              </Label>
+              <Input
+                id="exclusive-note"
+                value={form.exclusive_note ?? ''}
+                onChange={e => set('exclusive_note', e.target.value)}
+                placeholder="e.g. Best price available!"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Last Verified</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="date"
+                  value={form.last_verified_at ? form.last_verified_at.slice(0, 10) : ''}
+                  onChange={e => set('last_verified_at', e.target.value || null)}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0 text-xs"
+                  onClick={() => set('last_verified_at', new Date().toISOString().slice(0, 10))}
+                >
+                  Today
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Login credentials */}
+          <div className="col-span-2 space-y-3">
+            <p className="text-sm font-medium leading-none">
+              Affiliate Account Login{' '}
+              <span className="text-muted-foreground font-normal text-xs">(private — only visible to you)</span>
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="login-email">Email / Username</Label>
+                <Input
+                  id="login-email"
+                  value={form.login_email ?? ''}
+                  onChange={e => set('login_email', e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="login-password">Password</Label>
+                <Input
+                  id="login-password"
+                  type="password"
+                  value={form.login_password ?? ''}
+                  onChange={e => set('login_password', e.target.value)}
+                  placeholder="••••••••"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="login-method">Login Method</Label>
+                <Input
+                  id="login-method"
+                  value={form.login_method ?? ''}
+                  onChange={e => set('login_method', e.target.value)}
+                  placeholder="e.g. Google, Email"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Color picker */}
