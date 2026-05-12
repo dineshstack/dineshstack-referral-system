@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $icon
  * @property string|null $color
  * @property string|null $commission
+ * @property string|null $promo_code
  * @property string      $link_type
  * @property string      $prefix
  * @property string|null $affiliate_dashboard_url
@@ -44,6 +45,7 @@ class Program extends Model
         'icon',
         'color',
         'commission',
+        'promo_code',
         'link_type',
         'prefix',
         'affiliate_dashboard_url',

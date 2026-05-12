@@ -24,6 +24,7 @@ class UpdateProgramRequest extends FormRequest
             'icon'                    => ['nullable', 'string', 'max:10'],
             'color'                   => ['nullable', 'string', 'max:20'],
             'commission'              => ['nullable', 'string', 'max:60'],
+            'promo_code'              => ['nullable', 'string', 'max:100'],
             'link_type'               => ['sometimes', 'in:onetime,permanent'],
             'prefix'                  => ['sometimes', 'in:tools,deals,get,start,root'],
             'affiliate_dashboard_url' => ['nullable', 'url', 'max:500'],

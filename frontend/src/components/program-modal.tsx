@@ -26,8 +26,8 @@ const PREFIX_OPTIONS: { value: ProgramPrefix; label: string; example: string }[]
 
 const EMPTY_FORM: ProgramFormData = {
   name: '', slug: '', category: 'Hosting', icon: '🔗',
-  color: COLORS[0], commission: '', link_type: 'onetime',
-  prefix: 'tools',
+  color: COLORS[0], commission: '', promo_code: '',
+  link_type: 'onetime', prefix: 'tools',
   affiliate_dashboard_url: '', referral_benefit: '',
   exclusive_note: '', last_verified_at: null,
   login_email: '', login_password: '', login_method: '',
@@ -59,6 +59,7 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
         icon:                    program.icon,
         color:                   program.color,
         commission:              program.commission ?? '',
+        promo_code:              program.promo_code ?? '',
         link_type:               program.link_type,
         prefix:                  program.prefix ?? 'tools',
         affiliate_dashboard_url: program.affiliate_dashboard_url ?? '',
@@ -229,6 +230,21 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
               value={form.commission}
               onChange={e => set('commission', e.target.value)}
               placeholder="e.g. 20% or $50 flat"
+            />
+          </div>
+
+          {/* Promo code */}
+          <div className="space-y-1.5">
+            <Label htmlFor="promo-code">
+              Promo / Coupon Code{' '}
+              <span className="text-muted-foreground font-normal">(shown on deals page with copy button)</span>
+            </Label>
+            <Input
+              id="promo-code"
+              value={form.promo_code ?? ''}
+              onChange={e => set('promo_code', e.target.value.toUpperCase())}
+              placeholder="e.g. DINESH10"
+              className="font-mono uppercase"
             />
           </div>
 

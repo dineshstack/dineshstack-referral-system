@@ -11,6 +11,7 @@ export interface Program {
   icon: string
   color: string
   commission: string | null
+  promo_code: string | null
   link_type: LinkType
   prefix: ProgramPrefix
   embed_url: string
@@ -151,6 +152,7 @@ export interface PublicProgram {
   icon: string
   color: string
   commission: string | null
+  promo_code: string | null
   link_type: 'onetime' | 'permanent'
   prefix: string
   embed_url: string
@@ -178,6 +180,7 @@ export interface ProgramFormData {
   icon: string
   color: string
   commission: string
+  promo_code?: string
   link_type: LinkType
   prefix: ProgramPrefix
   affiliate_dashboard_url: string

@@ -18,6 +18,7 @@ class ProgramResource extends JsonResource
             'icon'                    => $this->icon,
             'color'                   => $this->color,
             'commission'              => $this->commission,
+            'promo_code'              => $this->promo_code,
             'link_type'               => $this->link_type,
             'affiliate_dashboard_url' => $this->affiliate_dashboard_url,
             'referral_benefit'        => $this->referral_benefit,

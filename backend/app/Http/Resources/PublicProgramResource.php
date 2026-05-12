@@ -17,6 +17,7 @@ class PublicProgramResource extends JsonResource
             'icon'       => $this->icon,
             'color'      => $this->color,
             'commission' => $this->commission,
+            'promo_code' => $this->promo_code,
             'link_type'  => $this->link_type,
             'prefix'     => $this->prefix,
             'embed_url'  => $this->embed_url,

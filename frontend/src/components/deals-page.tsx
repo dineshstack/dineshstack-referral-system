@@ -1,7 +1,11 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Search, Sparkles, BadgeCheck, TrendingUp, ExternalLink, MessageCircle } from 'lucide-react'
+import {
+  Search, Sparkles, BadgeCheck, TrendingUp, ExternalLink,
+  MessageCircle, Copy, Check, Moon, Sun, ArrowUp, Star,
+  ChevronRight, Globe, Tag,
+} from 'lucide-react'
 import { getPublicPrograms } from '@/lib/api'
 import { type PublicProgram } from '@/types'
 import { formatNumber } from '@/lib/utils'
@@ -10,6 +14,29 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 
+/* ── Dark mode ────────────────────────────────────────────────────────────── */
+function useDarkMode() {
+  const [dark, setDark] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isDark = saved === 'dark' || (!saved && prefersDark)
+    document.documentElement.classList.toggle('dark', isDark)
+    setDark(isDark)
+  }, [])
+
+  function toggle() {
+    const next = !dark
+    document.documentElement.classList.toggle('dark', next)
+    localStorage.setItem('theme', next ? 'dark' : 'light')
+    setDark(next)
+  }
+
+  return { dark, toggle }
+}
+
+/* ── Helpers ──────────────────────────────────────────────────────────────── */
 function timeAgo(iso: string): string {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)
   if (days === 0) return 'today'
@@ -27,6 +54,117 @@ function whatsappShare(p: PublicProgram, locale: string): string {
   return `https://wa.me/?text=${encodeURIComponent(msg)}`
 }
 
+/* ── Public Navbar ────────────────────────────────────────────────────────── */
+function PublicNav({ dark, toggleDark }: { dark: boolean; toggleDark: () => void }) {
+  const { locale, setLocale } = useLocale()
+
+  return (
+    <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+
+        <a
+          href="https://dineshstack.com"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="flex items-center gap-2 shrink-0"
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold">
+            D
+          </div>
+          <span className="font-semibold text-sm hidden sm:block">DineshStack</span>
+        </a>
+
+        <div className="flex items-center gap-1">
+          <a
+            href="https://dineshstack.com"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-accent"
+          >
+            <Globe className="h-3.5 w-3.5" />
+            dineshstack.com
+          </a>
+
+          <button
+            onClick={() => setLocale(locale === 'ar' ? 'en' : 'ar')}
+            className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            title="Switch language"
+          >
+            {locale === 'ar' ? '🇬🇧 EN' : '🇦🇪 AR'}
+          </button>
+
+          <button
+            onClick={toggleDark}
+            className="rounded-lg p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            title={dark ? 'Light mode' : 'Dark mode'}
+          >
+            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+/* ── Copy button ──────────────────────────────────────────────────────────── */
+function CopyButton({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false)
+
+  function copy() {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    })
+  }
+
+  return (
+    <button
+      onClick={copy}
+      title="Copy link"
+      className="rounded-lg p-1.5 text-muted-foreground/40 hover:text-primary hover:bg-primary/10 transition-colors"
+    >
+      {copied
+        ? <Check className="h-3.5 w-3.5 text-emerald-500" />
+        : <Copy className="h-3.5 w-3.5" />}
+    </button>
+  )
+}
+
+/* ── Promo code pill ──────────────────────────────────────────────────────── */
+function PromoCodePill({ code, accent, label }: { code: string; accent: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+
+  function copy() {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <button
+      onClick={copy}
+      className="group/pill w-full flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-left transition-all hover:shadow-sm"
+      style={{ borderColor: accent + '40', background: accent + '08' }}
+      title="Click to copy code"
+    >
+      <Tag className="h-3.5 w-3.5 shrink-0" style={{ color: accent }} />
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: accent }}>
+          {label}
+        </p>
+        <p className="font-mono font-bold text-sm tracking-widest text-foreground truncate">{code}</p>
+      </div>
+      <div className="shrink-0 rounded-lg p-1 transition-colors" style={{ background: accent + '15' }}>
+        {copied
+          ? <Check className="h-3.5 w-3.5 text-emerald-500" />
+          : <Copy className="h-3.5 w-3.5" style={{ color: accent }} />}
+      </div>
+    </button>
+  )
+}
+
+/* ── Standard Deal Card ───────────────────────────────────────────────────── */
 function DealCard({ p }: { p: PublicProgram }) {
   const { t, locale } = useLocale()
   const accent = p.color ?? '#f97316'
@@ -34,12 +172,10 @@ function DealCard({ p }: { p: PublicProgram }) {
   return (
     <div className="group flex flex-col rounded-2xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
 
-      {/* Accent top stripe */}
       <div className="h-1 w-full shrink-0" style={{ background: accent }} />
 
       <div className="flex flex-col flex-1 p-5 gap-4">
 
-        {/* Header: icon + name + action icons */}
         <div className="flex items-start justify-between gap-3">
           <a
             href={p.embed_url}
@@ -67,7 +203,7 @@ function DealCard({ p }: { p: PublicProgram }) {
             </div>
           </a>
 
-          <div className="flex items-center gap-1 shrink-0 pt-0.5">
+          <div className="flex items-center gap-0.5 shrink-0 pt-0.5">
             <a
               href={whatsappShare(p, locale)}
               target="_blank"
@@ -77,6 +213,7 @@ function DealCard({ p }: { p: PublicProgram }) {
             >
               <MessageCircle className="h-3.5 w-3.5" />
             </a>
+            <CopyButton url={p.embed_url} />
             <a
               href={p.embed_url}
               target="_blank"
@@ -88,7 +225,6 @@ function DealCard({ p }: { p: PublicProgram }) {
           </div>
         </div>
 
-        {/* Visitor benefit box — neutral background, accent label */}
         {p.referral_benefit && (
           <div className="rounded-xl bg-muted/60 dark:bg-muted/30 border border-border/50 px-3.5 py-3">
             <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: accent }}>
@@ -98,7 +234,14 @@ function DealCard({ p }: { p: PublicProgram }) {
           </div>
         )}
 
-        {/* Badges + stats row */}
+        {p.promo_code && (
+          <PromoCodePill
+            code={p.promo_code}
+            accent={accent}
+            label={t('deals.promo_code_label')}
+          />
+        )}
+
         <div className="flex items-center justify-between gap-2 mt-auto">
           <div className="flex items-center gap-1.5 flex-wrap">
             {p.commission && (
@@ -107,9 +250,7 @@ function DealCard({ p }: { p: PublicProgram }) {
               </Badge>
             )}
             {p.link_type === 'onetime' && (
-              <Badge variant="outline" className="text-[10px] h-5 px-2">
-                1× use
-              </Badge>
+              <Badge variant="outline" className="text-[10px] h-5 px-2">1× use</Badge>
             )}
             {p.last_verified_at && (
               <span className="flex items-center gap-0.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
@@ -126,7 +267,6 @@ function DealCard({ p }: { p: PublicProgram }) {
           )}
         </div>
 
-        {/* CTA — always brand primary, never per-program color */}
         <a
           href={p.embed_url}
           target="_blank"
@@ -141,13 +281,111 @@ function DealCard({ p }: { p: PublicProgram }) {
   )
 }
 
+/* ── Featured Card (wider, prominent) ────────────────────────────────────── */
+function FeaturedCard({ p }: { p: PublicProgram }) {
+  const { t, locale } = useLocale()
+  const accent = p.color ?? '#f97316'
+
+  return (
+    <div
+      className="group relative flex flex-col sm:flex-row rounded-2xl border-2 bg-card overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200"
+      style={{ borderColor: accent + '35' }}
+    >
+      <div className="h-1 sm:h-auto sm:w-1.5 w-full shrink-0" style={{ background: accent }} />
+
+      <div className="flex flex-col sm:flex-row flex-1 p-5 gap-5">
+
+        <div className="flex items-start gap-4 flex-1 min-w-0">
+          <div
+            className="h-14 w-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 border-2"
+            style={{ background: accent + '18', borderColor: accent + '30' }}
+          >
+            {p.icon || '🔗'}
+          </div>
+          <div className="min-w-0 flex-1">
+            <span
+              className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest rounded-full px-2.5 py-0.5 mb-1.5"
+              style={{ background: accent + '20', color: accent }}
+            >
+              <Star className="h-2.5 w-2.5 fill-current" />
+              {p.exclusive_note || t('deals.featured')}
+            </span>
+            <p className="font-bold text-base leading-snug group-hover:text-primary transition-colors">
+              {p.name}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">{p.category}</p>
+            {p.referral_benefit && (
+              <p className="text-sm text-muted-foreground mt-2 leading-relaxed line-clamp-2">
+                {p.referral_benefit}
+              </p>
+            )}
+            {p.promo_code && (
+              <div className="mt-2">
+                <PromoCodePill
+                  code={p.promo_code}
+                  accent={accent}
+                  label={t('deals.promo_code_label')}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3 shrink-0">
+          <div className="flex flex-wrap gap-1.5 sm:justify-end">
+            {p.commission && (
+              <Badge
+                className="text-[10px] h-5 px-2 font-bold border"
+                style={{ background: accent + '15', color: accent, borderColor: accent + '30' }}
+              >
+                {p.commission}
+              </Badge>
+            )}
+            {p.last_verified_at && (
+              <span className="flex items-center gap-0.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                <BadgeCheck className="h-3 w-3" />
+                {t('deals.verified')} {timeAgo(p.last_verified_at)}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <a
+              href={whatsappShare(p, locale)}
+              target="_blank"
+              rel="noreferrer noopener"
+              title={t('deals.whatsapp_share')}
+              className="rounded-lg p-1.5 text-muted-foreground/40 hover:text-[#25d366] hover:bg-[#25d366]/10 transition-colors"
+            >
+              <MessageCircle className="h-3.5 w-3.5" />
+            </a>
+            <CopyButton url={p.embed_url} />
+            <a
+              href={p.embed_url}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold text-white transition-all hover:opacity-90 shrink-0"
+              style={{ background: accent }}
+            >
+              {t('deals.cta')}
+              <ChevronRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Main Page ────────────────────────────────────────────────────────────── */
 export function DealsPage() {
   const { t, locale } = useLocale()
+  const { dark, toggle: toggleDark } = useDarkMode()
   const [programs, setPrograms] = useState<PublicProgram[]>([])
   const [loading, setLoading]   = useState(true)
   const [search, setSearch]     = useState('')
   const [category, setCategory] = useState('')
   const [sortBy, setSortBy]     = useState<'trending' | 'default'>('trending')
+  const [showTop, setShowTop]   = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -161,10 +399,16 @@ export function DealsPage() {
 
   useEffect(() => { load() }, [load])
 
-  /* JSON-LD — injected imperatively to avoid React 19 script-hoisting issues */
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 400)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  /* JSON-LD injected imperatively to avoid React 19 script-hoisting issues */
   useEffect(() => {
     if (programs.length === 0) return
-    const id     = 'deals-jsonld'
+    const id = 'deals-jsonld'
     let el = document.getElementById(id) as HTMLScriptElement | null
     if (!el) {
       el = document.createElement('script')
@@ -196,6 +440,11 @@ export function DealsPage() {
     [programs],
   )
 
+  const featured = useMemo(
+    () => programs.filter(p => p.exclusive_note),
+    [programs],
+  )
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
     let list = programs.filter(p =>
@@ -214,40 +463,99 @@ export function DealsPage() {
     return `${n} ${t(key)}`
   })()
 
+  const showFeatured = featured.length > 0 && search === '' && category === ''
+
   return (
     <div className="min-h-screen bg-background">
 
+      <PublicNav dark={dark} toggleDark={toggleDark} />
+
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <div className="relative border-b overflow-hidden">
-        {/* subtle gradient backdrop */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background pointer-events-none" />
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
-              <Sparkles className="h-4 w-4 text-primary" />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+
+          <div className="flex items-start gap-5 mb-6">
+            <div className="relative shrink-0">
+              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-2xl sm:text-3xl font-bold shadow-lg">
+                D
+              </div>
+              <span className="absolute -bottom-1 -right-1 rtl:-right-auto rtl:-left-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white text-[10px] font-bold ring-2 ring-background">
+                ✓
+              </span>
             </div>
-            <span className="text-xs font-bold text-primary uppercase tracking-widest">
-              {t('deals.badge')}
-            </span>
+            <div className="min-w-0 flex-1 pt-1">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/10 rounded-full px-2.5 py-0.5">
+                  <Sparkles className="h-2.5 w-2.5" />
+                  {t('deals.badge')}
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-1.5">
+                {t('deals.hero_greeting')}
+              </h1>
+              <p className="text-muted-foreground text-sm sm:text-base">
+                {t('deals.hero_role')}
+              </p>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-            {t('deals.title')}
-          </h1>
-          <p className="text-muted-foreground text-base sm:text-lg max-w-2xl leading-relaxed">
+
+          <p className="text-muted-foreground text-base sm:text-lg max-w-2xl leading-relaxed mb-8">
             {t('deals.subtitle')}
           </p>
+
+          {/* Credibility stats */}
+          <div className="flex flex-wrap items-center gap-6 sm:gap-10">
+            {[
+              { value: '10+', label: t('deals.stat_years') },
+              { value: t('deals.stat_role_value'), label: t('deals.stat_role') },
+              { value: loading ? '…' : `${programs.length}`, label: t('deals.stat_tools') },
+            ].map(({ value, label }) => (
+              <div key={label} className="flex flex-col">
+                <span className="text-xl sm:text-2xl font-bold text-foreground tabular-nums">{value}</span>
+                <span className="text-xs text-muted-foreground mt-0.5">{label}</span>
+              </div>
+            ))}
+
+            <div className="h-8 w-px bg-border hidden sm:block" />
+
+            <a
+              href="https://dineshstack.com"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="flex items-center gap-1.5 text-sm font-medium text-primary hover:underline underline-offset-4 transition-colors"
+            >
+              dineshstack.com
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-5">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
-        {/* ── Affiliate disclosure — understated ────────────────────────── */}
+        {/* ── Affiliate disclosure ────────────────────────────────────────── */}
         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
           <BadgeCheck className="h-3.5 w-3.5 text-primary shrink-0" />
           {t('deals.disclosure')}
         </p>
 
-        {/* ── Search + sort ─────────────────────────────────────────────── */}
+        {/* ── Featured picks ──────────────────────────────────────────────── */}
+        {showFeatured && !loading && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+              <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                {t('deals.featured_title')}
+              </h2>
+            </div>
+            <div className="space-y-3">
+              {featured.map(p => <FeaturedCard key={p.id} p={p} />)}
+            </div>
+          </div>
+        )}
+
+        {/* ── Search + sort ───────────────────────────────────────────────── */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative max-w-sm w-full">
             <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
@@ -277,7 +585,7 @@ export function DealsPage() {
           </div>
         </div>
 
-        {/* ── Category pills ────────────────────────────────────────────── */}
+        {/* ── Category pills ──────────────────────────────────────────────── */}
         {categories.length > 1 && (
           <div className="flex flex-wrap gap-2">
             {categories.map(c => (
@@ -296,7 +604,7 @@ export function DealsPage() {
           </div>
         )}
 
-        {/* ── Results count ─────────────────────────────────────────────── */}
+        {/* ── Results count ───────────────────────────────────────────────── */}
         {!loading && (
           <p className="text-xs text-muted-foreground">
             {countLabel}
@@ -305,7 +613,7 @@ export function DealsPage() {
           </p>
         )}
 
-        {/* ── Grid ──────────────────────────────────────────────────────── */}
+        {/* ── Grid ────────────────────────────────────────────────────────── */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -323,12 +631,46 @@ export function DealsPage() {
           </div>
         )}
 
-        {/* ── Footer ────────────────────────────────────────────────────── */}
-        <div className="border-t pt-6 pb-2 text-center text-xs text-muted-foreground">
-          {t('deals.footer')}
+        {/* ── Personal footer ─────────────────────────────────────────────── */}
+        <div className="border-t pt-8 pb-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-center sm:text-start">
+              <div className="flex items-center justify-center sm:justify-start gap-2 mb-1.5">
+                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-bold">
+                  D
+                </div>
+                <span className="text-sm font-semibold">Dinesh · DineshStack</span>
+              </div>
+              <p className="text-xs text-muted-foreground max-w-sm">{t('deals.footer')}</p>
+            </div>
+            <a
+              href="https://dineshstack.com"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors shrink-0"
+            >
+              <Globe className="h-3.5 w-3.5" />
+              dineshstack.com
+            </a>
+          </div>
+          <p className="mt-5 text-center text-[11px] text-muted-foreground/50">
+            © {new Date().getFullYear()} DineshStack · {t('deals.rights')}
+          </p>
         </div>
 
       </div>
+
+      {/* ── Back to top ─────────────────────────────────────────────────────── */}
+      {showTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 rtl:right-auto rtl:left-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all"
+          aria-label="Back to top"
+        >
+          <ArrowUp className="h-4 w-4" />
+        </button>
+      )}
+
     </div>
   )
 }
