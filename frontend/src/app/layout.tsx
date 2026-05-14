@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Cairo } from 'next/font/google'
 import './globals.css'
+/* preconnect + crossorigin declared via next/font — Next.js injects them automatically */
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AuthGuard } from '@/components/auth-guard'
@@ -8,7 +9,7 @@ import { AppShell } from '@/components/app-shell'
 import { LocaleProvider } from '@/lib/locale'
 
 const inter = Inter({ subsets: ['latin'],          variable: '--font-inter' })
-const cairo = Cairo({ subsets: ['arabic', 'latin'], variable: '--font-cairo', display: 'swap' })
+const cairo = Cairo({ subsets: ['arabic', 'latin'], variable: '--font-cairo', display: 'swap', weight: ['400', '600', '700'] })
 
 export const metadata: Metadata = {
   title: 'DineshStack Referral Manager',

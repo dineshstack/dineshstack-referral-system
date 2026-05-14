@@ -213,9 +213,18 @@ function toEasternArabic(n: number): string {
   return n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[+d])
 }
 
-const REDUCED = typeof window !== 'undefined'
-  ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  : false
+/* Safe: always false on SSR, read from matchMedia on client after mount */
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReduced(mq.matches)
+    const h = (e: MediaQueryListEvent) => setReduced(e.matches)
+    mq.addEventListener('change', h)
+    return () => mq.removeEventListener('change', h)
+  }, [])
+  return reduced
+}
 
 /* ─────────────────────────────────────────────────────────────────────────── */
 /*  Hooks                                                                       */
@@ -239,12 +248,13 @@ function useDarkMode() {
 }
 
 function useTypewriter(words: string[], speed = 75, pause = 2200, del = 38) {
+  const reduced = useReducedMotion()
   const [idx,  setIdx]  = useState(0)
-  const [text, setText] = useState(REDUCED ? words[0] : '')
+  const [text, setText] = useState(words[0])
   const [deleting, setDel] = useState(false)
 
   useEffect(() => {
-    if (REDUCED) return
+    if (reduced) { setText(words[0]); return }
     const word = words[idx]
     if (!deleting && text === word) {
       const t = setTimeout(() => setDel(true), pause)
@@ -260,18 +270,19 @@ function useTypewriter(words: string[], speed = 75, pause = 2200, del = 38) {
       deleting ? del : speed,
     )
     return () => clearTimeout(t)
-  }, [text, deleting, idx, words, speed, pause, del])
+  }, [text, deleting, idx, words, speed, pause, del, reduced])
 
   return text
 }
 
 function useCounter(end: number, duration = 1600) {
-  const [val, setVal]   = useState(REDUCED ? end : 0)
+  const reduced         = useReducedMotion()
+  const [val, setVal]   = useState(0)
   const [on, setOn]     = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (REDUCED) return
+    if (reduced) { setVal(end); return }
     const el = ref.current
     if (!el) return
     const obs = new IntersectionObserver(
@@ -280,10 +291,10 @@ function useCounter(end: number, duration = 1600) {
     )
     obs.observe(el)
     return () => obs.disconnect()
-  }, [])
+  }, [reduced, end])
 
   useEffect(() => {
-    if (REDUCED || !on) return
+    if (reduced || !on) return
     const step = end / (duration / 16)
     let cur = 0
     const id = setInterval(() => {
@@ -292,38 +303,23 @@ function useCounter(end: number, duration = 1600) {
       if (cur >= end) clearInterval(id)
     }, 16)
     return () => clearInterval(id)
-  }, [on, end, duration])
+  }, [on, end, duration, reduced])
 
   return { val, ref }
-}
-
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null)
-  const [vis, setVis] = useState(REDUCED)
-  useEffect(() => {
-    if (REDUCED) return
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVis(true); obs.disconnect() } },
-      { threshold: 0.08 },
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-  return { ref, vis }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
 /*  Small shared components                                                     */
 /* ─────────────────────────────────────────────────────────────────────────── */
+
+/* CSS scroll-driven reveal — zero JS, off main thread, fixes INP.
+   `animation-delay` provides stagger; `animation-timeline: view()` fires
+   as the element enters the viewport. See globals.css .scroll-reveal. */
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const { ref, vis } = useScrollReveal()
   return (
     <div
-      ref={ref}
-      className={vis ? 'animate-fade-up' : 'opacity-0'}
-      style={vis && !REDUCED ? { animationDelay: `${delay}ms` } : undefined}
+      className="scroll-reveal"
+      style={delay ? { animationDelay: `${delay}ms` } : undefined}
     >
       {children}
     </div>
@@ -406,11 +402,12 @@ function StatCard({ value, suffix, labelKey, Icon }: {
 /* ─────────────────────────────────────────────────────────────────────────── */
 const NAV_IDS = ['about', 'skills', 'experience', 'projects', 'tools', 'contact'] as const
 
-function PortfolioNav({ dark, toggleDark }: { dark: boolean; toggleDark: () => void }) {
+function PortfolioNav({ dark, toggleDark, activeId }: {
+  dark: boolean; toggleDark: () => void; activeId: string
+}) {
   const { t, locale, setLocale } = useLocale()
-  const [scrolled,  setScrolled]  = useState(false)
-  const [progress,  setProgress]  = useState(0)
-  const [activeId,  setActiveId]  = useState<string>('')
+  const [scrolled, setScrolled] = useState(false)
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     const onScroll = () => {
@@ -421,17 +418,6 @@ function PortfolioNav({ dark, toggleDark }: { dark: boolean; toggleDark: () => v
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  /* Active section tracking */
-  useEffect(() => {
-    const els = NAV_IDS.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[]
-    const obs = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) setActiveId(e.target.id) }),
-      { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
-    )
-    els.forEach(el => obs.observe(el))
-    return () => obs.disconnect()
   }, [])
 
   function scrollTo(id: string) {
@@ -470,7 +456,7 @@ function PortfolioNav({ dark, toggleDark }: { dark: boolean; toggleDark: () => v
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               }`}
             >
-              {t(`portfolio.nav_${id}` as never) || id}
+              {t(`portfolio.nav_${id as string}`) || id}
             </button>
           ))}
         </div>
@@ -563,13 +549,14 @@ function MobileBottomNav({ activeId }: { activeId: string }) {
 /* ─────────────────────────────────────────────────────────────────────────── */
 function HeroSection() {
   const { t } = useLocale()
+  const reduced = useReducedMotion()
   const role    = useTypewriter(ROLES)
   const heroRef = useRef<HTMLElement>(null)
   const dotsRef = useRef<HTMLDivElement>(null)
 
   /* Cursor-following parallax — direct DOM, no React re-renders */
   useEffect(() => {
-    if (REDUCED) return
+    if (reduced) return
     const hero = heroRef.current
     if (!hero) return
     function onMove(e: MouseEvent) {
@@ -788,7 +775,14 @@ function SkillsSection() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {Object.entries(SKILLS).map(([cat, { icon: Icon, color, items }], i) => (
             <Reveal key={cat} delay={i * 70}>
-              <div className={`group h-full rounded-2xl border bg-gradient-to-br ${color} bg-card p-5 hover:border-primary/30 transition-all`}>
+              <div
+                className={`skill-card group h-full rounded-2xl border bg-gradient-to-br ${color} bg-card p-5 hover:border-primary/30 transition-all`}
+                onMouseMove={e => {
+                  const r = e.currentTarget.getBoundingClientRect()
+                  e.currentTarget.style.setProperty('--x', `${e.clientX - r.left}px`)
+                  e.currentTarget.style.setProperty('--y', `${e.clientY - r.top}px`)
+                }}
+              >
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-background border">
                     <Icon className="h-4 w-4 text-primary" />
@@ -1404,7 +1398,7 @@ export function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <PortfolioNav dark={dark} toggleDark={toggleDark} />
+      <PortfolioNav dark={dark} toggleDark={toggleDark} activeId={activeId} />
 
       <HeroSection />
       <AboutSection />
