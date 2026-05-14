@@ -11,12 +11,19 @@ export interface Program {
   icon: string
   color: string
   commission: string | null
+  pricing_label: string | null
   promo_code: string | null
   link_type: LinkType
   prefix: ProgramPrefix
   embed_url: string
   affiliate_dashboard_url: string | null
   referral_benefit: string | null
+  description: string | null
+  my_rating: number | null
+  using_since: number | null
+  review_score: number | null
+  review_url: string | null
+  integrations: string | null
   exclusive_note: string | null
   last_verified_at: string | null
   login_email: string | null
@@ -152,15 +159,33 @@ export interface PublicProgram {
   icon: string
   color: string
   commission: string | null
+  pricing_label: string | null
   promo_code: string | null
   link_type: 'onetime' | 'permanent'
   prefix: string
   embed_url: string
   referral_benefit: string | null
+  description: string | null
+  my_rating: number | null
+  using_since: number | null
+  review_score: number | null
+  review_url: string | null
+  integrations: string | null
   exclusive_note: string | null
   last_verified_at: string | null
   total_clicks: number
   clicks_30d: number
+}
+
+export interface Payout {
+  id: number
+  program_id: number
+  amount: number
+  currency: string
+  paid_at: string
+  payment_method: string | null
+  notes: string | null
+  created_at: string
 }
 
 export interface PostbackEvent {
@@ -180,11 +205,18 @@ export interface ProgramFormData {
   icon: string
   color: string
   commission: string
+  pricing_label?: string
   promo_code?: string
+  integrations?: string
   link_type: LinkType
   prefix: ProgramPrefix
   affiliate_dashboard_url: string
   referral_benefit?: string
+  description?: string
+  my_rating?: number | null
+  using_since?: number | null
+  review_score?: number | null
+  review_url?: string
   exclusive_note?: string
   last_verified_at?: string | null
   login_email?: string

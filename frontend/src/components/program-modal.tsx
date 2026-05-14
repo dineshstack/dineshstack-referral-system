@@ -26,9 +26,12 @@ const PREFIX_OPTIONS: { value: ProgramPrefix; label: string; example: string }[]
 
 const EMPTY_FORM: ProgramFormData = {
   name: '', slug: '', category: 'Hosting', icon: '🔗',
-  color: COLORS[0], commission: '', promo_code: '',
+  color: COLORS[0], commission: '', pricing_label: '', promo_code: '',
+  integrations: '',
   link_type: 'onetime', prefix: 'tools',
   affiliate_dashboard_url: '', referral_benefit: '',
+  description: '', my_rating: null, using_since: null,
+  review_score: null, review_url: '',
   exclusive_note: '', last_verified_at: null,
   login_email: '', login_password: '', login_method: '',
   low_queue_threshold: 3, critical_queue_threshold: 1,
@@ -59,11 +62,18 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
         icon:                    program.icon,
         color:                   program.color,
         commission:              program.commission ?? '',
+        pricing_label:           program.pricing_label ?? '',
         promo_code:              program.promo_code ?? '',
         link_type:               program.link_type,
         prefix:                  program.prefix ?? 'tools',
         affiliate_dashboard_url: program.affiliate_dashboard_url ?? '',
         referral_benefit:        program.referral_benefit ?? '',
+        description:             program.description ?? '',
+        my_rating:               program.my_rating ?? null,
+        using_since:             program.using_since ?? null,
+        review_score:            program.review_score ?? null,
+        review_url:              program.review_url ?? '',
+        integrations:            program.integrations ?? '',
         exclusive_note:          program.exclusive_note ?? '',
         last_verified_at:        program.last_verified_at ?? null,
         login_email:             program.login_email ?? '',
@@ -233,6 +243,20 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
             />
           </div>
 
+          {/* Pricing label */}
+          <div className="space-y-1.5">
+            <Label htmlFor="pricing-label">
+              Pricing Label{' '}
+              <span className="text-muted-foreground font-normal">(shown as badge on deals page)</span>
+            </Label>
+            <Input
+              id="pricing-label"
+              value={form.pricing_label ?? ''}
+              onChange={e => set('pricing_label', e.target.value)}
+              placeholder="e.g. Free, Freemium, From $5/mo, $99/yr"
+            />
+          </div>
+
           {/* Promo code */}
           <div className="space-y-1.5">
             <Label htmlFor="promo-code">
@@ -245,6 +269,20 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
               onChange={e => set('promo_code', e.target.value.toUpperCase())}
               placeholder="e.g. DINESH10"
               className="font-mono uppercase"
+            />
+          </div>
+
+          {/* Integrations */}
+          <div className="col-span-2 space-y-1.5">
+            <Label htmlFor="integrations">
+              Works With (Integrations){' '}
+              <span className="text-muted-foreground font-normal">(comma-separated, shown as pills)</span>
+            </Label>
+            <Input
+              id="integrations"
+              value={form.integrations ?? ''}
+              onChange={e => set('integrations', e.target.value)}
+              placeholder="e.g. GitHub,Vercel,Slack,Docker"
             />
           </div>
 
@@ -322,6 +360,73 @@ export function ProgramModal({ open, program, programs, defaultParentId, onSave,
               onChange={e => set('referral_benefit', e.target.value)}
               placeholder="e.g. 20% off first month + free domain for 1 year"
             />
+          </div>
+
+          {/* Why I recommend — personal description */}
+          <div className="col-span-2 space-y-1.5">
+            <Label htmlFor="description">
+              Why I Recommend{' '}
+              <span className="text-muted-foreground font-normal">(shown on deals page — write in first person)</span>
+            </Label>
+            <Textarea
+              id="description"
+              rows={3}
+              value={form.description ?? ''}
+              onChange={e => set('description', e.target.value)}
+              placeholder="e.g. I've hosted all my Laravel projects here since 2021. Sub-$5/mo for real SSD VPS with 99.9% uptime — never had a support issue that wasn't resolved in under an hour."
+            />
+          </div>
+
+          {/* My rating + Using since + Review score */}
+          <div className="col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="my-rating">My Rating (1–5 ⭐)</Label>
+              <select
+                id="my-rating"
+                value={form.my_rating ?? ''}
+                onChange={e => set('my_rating', e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                <option value="">— none —</option>
+                {[5, 4, 3, 2, 1].map(n => (
+                  <option key={n} value={n}>{'⭐'.repeat(n)} ({n}/5)</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="using-since">Using Since (year)</Label>
+              <Input
+                id="using-since"
+                type="number"
+                min={2000}
+                max={new Date().getFullYear()}
+                placeholder="2021"
+                value={form.using_since ?? ''}
+                onChange={e => set('using_since', e.target.value ? parseInt(e.target.value) : null)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="review-score">G2/Capterra Score</Label>
+              <Input
+                id="review-score"
+                type="number"
+                min={0}
+                max={5}
+                step={0.1}
+                placeholder="4.6"
+                value={form.review_score ?? ''}
+                onChange={e => set('review_score', e.target.value ? parseFloat(e.target.value) : null)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="review-url">Review Source URL</Label>
+              <Input
+                id="review-url"
+                placeholder="https://g2.com/products/…"
+                value={form.review_url ?? ''}
+                onChange={e => set('review_url', e.target.value)}
+              />
+            </div>
           </div>
 
           {/* Exclusive note + last verified */}

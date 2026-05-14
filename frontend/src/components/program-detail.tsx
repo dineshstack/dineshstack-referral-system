@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, ArrowRight, Copy, Check, ExternalLink, Plus, X, RotateCw, Bot, Clock, HeartPulse, Gift, KeyRound } from 'lucide-react'
-import { getProgram, getLinks, removeLink, addLinks, requeueLink } from '@/lib/api'
-import { type Program, type ReferralLink, type ClickEvent, type LinkStatus } from '@/types'
+import { ArrowLeft, ArrowRight, Copy, Check, ExternalLink, Plus, X, RotateCw, Bot, Clock, HeartPulse, Gift, KeyRound, DollarSign, Trash2 } from 'lucide-react'
+import { getProgram, getLinks, removeLink, addLinks, requeueLink, getPayouts, addPayout, deletePayout } from '@/lib/api'
+import { type Program, type ReferralLink, type ClickEvent, type LinkStatus, type Payout } from '@/types'
 import { buildRedirectUrl, formatDate, formatDateTime } from '@/lib/utils'
 import { useLocale } from '@/lib/locale'
 import { AddLinksModal } from '@/components/add-links-modal'
@@ -35,21 +35,70 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
   const [program, setProgram]           = useState<Program | null>(null)
   const [links, setLinks]               = useState<ReferralLink[]>([])
   const [recentClicks, setRecentClicks] = useState<ClickEvent[]>([])
+  const [payouts, setPayouts]           = useState<Payout[]>([])
   const [loading, setLoading]           = useState(true)
   const [showAdd, setShowAdd]           = useState(false)
   const [filter, setFilter]             = useState<FilterTab>('all')
   const [copiedUrl, setCopiedUrl]       = useState(false)
 
+  // Payout form state
+  const [showPayoutForm, setShowPayoutForm] = useState(false)
+  const [payoutForm, setPayoutForm] = useState({
+    amount: '', currency: 'USD', paid_at: new Date().toISOString().slice(0, 10),
+    payment_method: '', notes: '',
+  })
+  const [savingPayout, setSavingPayout] = useState(false)
+
   async function load() {
     try {
-      const [prog, linkList] = await Promise.all([getProgram(id), getLinks(id)])
+      const [prog, linkList, payoutList] = await Promise.all([
+        getProgram(id),
+        getLinks(id),
+        getPayouts(id),
+      ])
       setProgram(prog.data)
       setRecentClicks(prog.recent_clicks)
       setLinks(linkList)
+      setPayouts(payoutList)
     } catch {
       toast.error('Failed to load program')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleAddPayout() {
+    const amount = parseFloat(payoutForm.amount)
+    if (!amount || amount <= 0) { toast.error('Enter a valid amount'); return }
+    if (!payoutForm.paid_at) { toast.error('Select a payment date'); return }
+    setSavingPayout(true)
+    try {
+      await addPayout(id, {
+        amount,
+        currency:        payoutForm.currency || 'USD',
+        paid_at:         payoutForm.paid_at,
+        payment_method:  payoutForm.payment_method || undefined,
+        notes:           payoutForm.notes || undefined,
+      })
+      toast.success('Payout recorded')
+      setShowPayoutForm(false)
+      setPayoutForm({ amount: '', currency: 'USD', paid_at: new Date().toISOString().slice(0, 10), payment_method: '', notes: '' })
+      load()
+    } catch {
+      toast.error('Failed to save payout')
+    } finally {
+      setSavingPayout(false)
+    }
+  }
+
+  async function handleDeletePayout(payoutId: number) {
+    if (!confirm('Delete this payout record? This will also reduce the program earnings total.')) return
+    try {
+      await deletePayout(id, payoutId)
+      toast.success('Payout deleted')
+      load()
+    } catch {
+      toast.error('Failed to delete payout')
     }
   }
 
@@ -151,10 +200,15 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Total Clicks',  val: program.total_clicks },
-          { label: 'Links Used',    val: program.total_conversions },
-          { label: 'In Queue',      val: links.filter(l => l.status === 'queued').length },
-          { label: 'Commission',    val: program.commission ?? '—' },
+          { label: 'Total Clicks',   val: program.total_clicks },
+          { label: 'Links Used',     val: program.total_conversions },
+          { label: 'In Queue',       val: links.filter(l => l.status === 'queued').length },
+          {
+            label: 'Earned',
+            val: program.total_earnings > 0
+              ? `$${Number(program.total_earnings).toFixed(2)}`
+              : program.commission ?? '—',
+          },
         ].map(({ label, val }) => (
           <div key={label} className="rounded-lg border bg-card p-4">
             <p className="text-xl font-bold">{val}</p>
@@ -427,6 +481,143 @@ export function ProgramDetailPage({ id }: ProgramDetailPageProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Payouts */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-emerald-500" />
+                Payouts Received
+              </CardTitle>
+              {payouts.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Total: <span className="font-semibold text-foreground">
+                    ${payouts.reduce((s, p) => s + p.amount, 0).toFixed(2)}
+                  </span>
+                  {' '}across {payouts.length} payment{payouts.length !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowPayoutForm(v => !v)}
+              className="shrink-0"
+            >
+              <Plus className="h-3.5 w-3.5" /> Record
+            </Button>
+          </div>
+        </CardHeader>
+
+        {showPayoutForm && (
+          <div className="border-b px-4 pb-4 space-y-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground font-medium">Amount *</label>
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="50.00"
+                  value={payoutForm.amount}
+                  onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
+                  className="w-full rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground font-medium">Currency</label>
+                <input
+                  placeholder="USD"
+                  value={payoutForm.currency}
+                  onChange={e => setPayoutForm(f => ({ ...f, currency: e.target.value.toUpperCase() }))}
+                  className="w-full rounded-md border bg-background px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:ring-1 focus:ring-ring"
+                  maxLength={5}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground font-medium">Date *</label>
+                <input
+                  type="date"
+                  value={payoutForm.paid_at}
+                  onChange={e => setPayoutForm(f => ({ ...f, paid_at: e.target.value }))}
+                  className="w-full rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground font-medium">Method</label>
+                <input
+                  placeholder="PayPal, Wire…"
+                  value={payoutForm.payment_method}
+                  onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value }))}
+                  className="w-full rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground font-medium">Notes</label>
+              <input
+                placeholder="e.g. April commission for 12 conversions"
+                value={payoutForm.notes}
+                onChange={e => setPayoutForm(f => ({ ...f, notes: e.target.value }))}
+                className="w-full rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={handleAddPayout} disabled={savingPayout}>
+                {savingPayout ? 'Saving…' : 'Save Payout'}
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setShowPayoutForm(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <CardContent className="p-0">
+          {payouts.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground py-8">
+              No payouts recorded yet. Click "Record" when you receive a payment.
+            </p>
+          ) : (
+            <div className="divide-y">
+              {payouts.map(p => (
+                <div key={p.id} className="flex items-center gap-3 px-4 py-3 text-sm">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/10 shrink-0">
+                    <DollarSign className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                        {p.currency} {p.amount.toFixed(2)}
+                      </span>
+                      {p.payment_method && (
+                        <span className="text-[10px] font-medium bg-muted rounded-full px-2 py-0.5 text-muted-foreground">
+                          {p.payment_method}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2">
+                      <span>{p.paid_at}</span>
+                      {p.notes && <span className="truncate">· {p.notes}</span>}
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-muted-foreground hover:text-destructive shrink-0"
+                    onClick={() => handleDeletePayout(p.id)}
+                    title="Delete payout"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {program && (
         <AddLinksModal

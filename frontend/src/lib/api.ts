@@ -1,6 +1,7 @@
 import axios from 'axios'
 import type {
   AnalyticsData,
+  Payout,
   Program,
   ProgramFormData,
   ProgramTrend,
@@ -142,6 +143,25 @@ export async function getPublicPrograms(): Promise<PublicProgram[]> {
   if (!res.ok) throw new Error('Failed to load programs')
   const json = await res.json()
   return json.data
+}
+
+// ── Payouts ───────────────────────────────────────────────────────────────────
+
+export async function getPayouts(programId: number): Promise<Payout[]> {
+  const res = await api.get<{ data: Payout[] }>(`/api/programs/${programId}/payouts`)
+  return res.data.data
+}
+
+export async function addPayout(
+  programId: number,
+  data: { amount: number; currency: string; paid_at: string; payment_method?: string; notes?: string },
+): Promise<Payout> {
+  const res = await api.post<Payout>(`/api/programs/${programId}/payouts`, data)
+  return res.data
+}
+
+export async function deletePayout(programId: number, payoutId: number): Promise<void> {
+  await api.delete(`/api/programs/${programId}/payouts/${payoutId}`)
 }
 
 // ── Analytics ─────────────────────────────────────────────────────────────────

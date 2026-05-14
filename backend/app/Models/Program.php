@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Payout;
 
 /**
  * @property int         $id
@@ -45,11 +46,18 @@ class Program extends Model
         'icon',
         'color',
         'commission',
+        'pricing_label',
         'promo_code',
         'link_type',
         'prefix',
         'affiliate_dashboard_url',
         'referral_benefit',
+        'description',
+        'my_rating',
+        'using_since',
+        'review_score',
+        'review_url',
+        'integrations',
         'exclusive_note',
         'last_verified_at',
         'login_email',
@@ -68,6 +76,9 @@ class Program extends Model
     protected function casts(): array
     {
         return [
+            'my_rating'                => 'integer',
+            'using_since'              => 'integer',
+            'review_score'             => 'decimal:1',
             'is_active'                => 'boolean',
             'is_public'                => 'boolean',
             'last_verified_at'         => 'datetime',
@@ -104,6 +115,11 @@ class Program extends Model
     public function postbackEvents(): HasMany
     {
         return $this->hasMany(PostbackEvent::class);
+    }
+
+    public function payouts(): HasMany
+    {
+        return $this->hasMany(Payout::class);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

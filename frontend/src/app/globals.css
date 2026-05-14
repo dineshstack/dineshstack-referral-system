@@ -59,85 +59,87 @@
 
 /* ── Design tokens — light ───────────────────────────────────────────────── */
 :root {
-  --background:   0 0% 100%;
-  --foreground:   240 10% 3.9%;
+  /* Slightly cool off-white — cleaner than pure white */
+  --background:   220 20% 99%;
+  --foreground:   222 47% 11%;
 
   --card:             0 0% 100%;
-  --card-foreground:  240 10% 3.9%;
+  --card-foreground:  222 47% 11%;
 
   --popover:            0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
+  --popover-foreground: 222 47% 11%;
 
-  /* DineshStack brand — orange */
-  --primary:            24.6 95% 53.1%;
+  /* DineshStack brand — indigo (professional 2025-2026 dev-tool palette) */
+  --primary:            243 75% 58%;   /* #4f46e5 indigo-600 */
   --primary-foreground: 0 0% 100%;
 
-  --secondary:            240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
+  --secondary:            220 14% 96%;
+  --secondary-foreground: 222 47% 11%;
 
-  --muted:            240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
+  --muted:            220 14% 96%;
+  --muted-foreground: 215 16% 47%;
 
-  --accent:            240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
+  --accent:            220 14% 96%;
+  --accent-foreground: 222 47% 11%;
 
   --destructive:            0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 240 5.9% 90%;
-  --input:  240 5.9% 90%;
-  --ring:   24.6 95% 53.1%;
+  --border: 220 13% 91%;
+  --input:  220 13% 91%;
+  --ring:   243 75% 58%;
 
   --radius: 0.625rem;
 
-  --sidebar-background:          240 5.9% 10%;
-  --sidebar-foreground:          240 4.8% 95.9%;
-  --sidebar-primary:             24.6 95% 53.1%;
+  --sidebar-background:          222 47% 11%;
+  --sidebar-foreground:          220 14% 92%;
+  --sidebar-primary:             243 75% 63%;
   --sidebar-primary-foreground:  0 0% 100%;
-  --sidebar-accent:              240 3.7% 15.9%;
-  --sidebar-accent-foreground:   240 4.8% 95.9%;
-  --sidebar-border:              240 3.7% 15.9%;
-  --sidebar-ring:                24.6 95% 53.1%;
+  --sidebar-accent:              222 40% 16%;
+  --sidebar-accent-foreground:   220 14% 92%;
+  --sidebar-border:              222 40% 16%;
+  --sidebar-ring:                243 75% 63%;
 }
 
 /* ── Design tokens — dark ────────────────────────────────────────────────── */
 .dark {
-  --background:  240 10% 3.9%;
-  --foreground:  0 0% 98%;
+  /* Vercel / Linear inspired deep charcoal-navy */
+  --background:  222 20% 7%;
+  --foreground:  210 20% 95%;
 
-  --card:            240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
+  --card:            222 18% 10%;
+  --card-foreground: 210 20% 95%;
 
-  --popover:            240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
+  --popover:            222 18% 10%;
+  --popover-foreground: 210 20% 95%;
 
-  --primary:            24.6 95% 53.1%;
+  --primary:            243 72% 68%;   /* #7c78ef indigo-400 — lighter for dark contrast */
   --primary-foreground: 0 0% 100%;
 
-  --secondary:            240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
+  --secondary:            222 14% 16%;
+  --secondary-foreground: 210 20% 92%;
 
-  --muted:            240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
+  --muted:            222 14% 16%;
+  --muted-foreground: 215 16% 58%;
 
-  --accent:            240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
+  --accent:            222 14% 16%;
+  --accent-foreground: 210 20% 95%;
 
   --destructive:            0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 240 3.7% 15.9%;
-  --input:  240 3.7% 15.9%;
-  --ring:   24.6 95% 53.1%;
+  --border: 220 13% 18%;
+  --input:  220 13% 18%;
+  --ring:   243 72% 68%;
 
-  --sidebar-background:         240 5.9% 6%;
-  --sidebar-foreground:         240 4.8% 95.9%;
-  --sidebar-primary:            24.6 95% 53.1%;
+  --sidebar-background:         222 20% 5%;
+  --sidebar-foreground:         220 14% 90%;
+  --sidebar-primary:            243 72% 68%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent:             240 3.7% 12%;
-  --sidebar-accent-foreground:  240 4.8% 95.9%;
-  --sidebar-border:             240 3.7% 12%;
-  --sidebar-ring:               24.6 95% 53.1%;
+  --sidebar-accent:             222 14% 12%;
+  --sidebar-accent-foreground:  220 14% 90%;
+  --sidebar-border:             222 14% 12%;
+  --sidebar-ring:               243 72% 68%;
 }
 
 /* ── Global base styles ──────────────────────────────────────────────────── */
@@ -148,6 +150,26 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ── Scroll-in animations ────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+/* ── Deals page — dot grid hero pattern (Linear / Raycast aesthetic) ──────── */
+.deals-hero-grid {
+  background-image: radial-gradient(circle at 1px 1px, hsl(243 75% 58% / 0.10) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+.dark .deals-hero-grid {
+  background-image: radial-gradient(circle at 1px 1px, hsl(243 72% 68% / 0.08) 1px, transparent 0);
 }
 
 /* ── RTL / Arabic ────────────────────────────────────────────────────────── */

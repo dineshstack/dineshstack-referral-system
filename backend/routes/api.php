@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LinksController;
+use App\Http\Controllers\Api\PayoutController;
 use App\Http\Controllers\Api\PostbackController;
 use App\Http\Controllers\Api\ProgramController;
 use App\Http\Controllers\Api\PublicProgramController;
@@ -42,4 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // All links across all programs — paginated + filterable
     Route::get('links', [LinksController::class, 'index']);
+
+    // Payout tracking
+    Route::get('programs/{program}/payouts', [PayoutController::class, 'index']);
+    Route::post('programs/{program}/payouts', [PayoutController::class, 'store']);
+    Route::delete('programs/{program}/payouts/{payout}', [PayoutController::class, 'destroy']);
 });
