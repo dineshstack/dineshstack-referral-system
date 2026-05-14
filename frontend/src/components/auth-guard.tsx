@@ -10,7 +10,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const PUBLIC_PATHS = ['/login', '/deals']
+    const PUBLIC_PATHS = ['/login', '/deals', '/portfolio']
     const token = localStorage.getItem('api_token')
     if (!token && !PUBLIC_PATHS.includes(pathname)) {
       router.replace('/login')

@@ -80,6 +80,72 @@ const EN: Record<string, string> = {
   'deals.works_with':       'Works with',
   'deals.back_to_top':      'Back to top',
 
+  /* ── Portfolio ──────────────────────────────────────────────────────── */
+  'portfolio.toggle_ar':      'العربية',
+  'portfolio.toggle_en':      'English',
+  'portfolio.nav_about':      'About',
+  'portfolio.nav_skills':     'Skills',
+  'portfolio.nav_experience': 'Experience',
+  'portfolio.nav_projects':   'Projects',
+  'portfolio.nav_tools':      'Tools',
+  'portfolio.nav_contact':    'Contact',
+  'portfolio.hire_me':        "Let's Talk",
+  'portfolio.blog_link':      'Blog',
+  'portfolio.available':      'Available for consulting & collaboration',
+  'portfolio.view_projects':  'View Projects',
+  'portfolio.read_blog':      'Read Blog',
+  'portfolio.scroll':         'scroll',
+
+  'portfolio.about_label':    'About me',
+  'portfolio.about_title':    'A decade of shipping real products',
+  'portfolio.about_sub':      'From solo freelancer to engineering lead — I\'ve built systems from scratch, scaled teams, and delivered products that matter.',
+
+  'portfolio.skills_label':   'Tech stack',
+  'portfolio.skills_title':   'Tools I build with',
+  'portfolio.skills_sub':     'A curated set of technologies I use daily to ship production-grade systems.',
+
+  'portfolio.exp_label':      'Experience',
+  'portfolio.exp_title':      'Career timeline',
+  'portfolio.exp_sub':        '10+ years of building, shipping, and leading across the full stack.',
+  'portfolio.current':        'Current',
+
+  'portfolio.projects_label': 'Work',
+  'portfolio.projects_title': 'Selected projects',
+  'portfolio.projects_sub':   'A mix of products I\'ve built, launched, or contributed to.',
+
+  'portfolio.testimonials_label': 'Testimonials',
+  'portfolio.testimonials_title': 'What clients say',
+  'portfolio.testimonials_sub':   'A few words from people I\'ve shipped code with.',
+
+  'portfolio.tools_label':    'Favorite tools',
+  'portfolio.tools_title':    'What I actually use',
+  'portfolio.tools_sub':      'Every tool here is something I pay for and use in real projects. Click any to get an exclusive deal.',
+  'portfolio.tools_all':      'See all deals + exclusive discounts',
+
+  'portfolio.edu_label':      'Education',
+  'portfolio.edu_title':      'Academic background',
+
+  'portfolio.contact_label':  'Contact',
+  'portfolio.contact_title':  "Let's build something",
+  'portfolio.contact_sub':    'Available for consulting, freelance projects, technical advisory, and full-time senior roles. Drop me a message.',
+  'portfolio.send_email':     'Send an email',
+  'portfolio.whatsapp':       'Chat on WhatsApp',
+
+  'portfolio.form_name':      'Your name',
+  'portfolio.form_email':     'Your email',
+  'portfolio.form_message':   'Your message',
+  'portfolio.form_send':      'Send Message',
+  'portfolio.form_sending':   'Sending…',
+  'portfolio.form_sent':      "Sent! I'll reply soon.",
+  'portfolio.form_error':     'Something went wrong. Try emailing directly.',
+
+  'portfolio.stat_years':     'Years Experience',
+  'portfolio.stat_projects':  'Projects Delivered',
+  'portfolio.stat_readers':   'Blog Readers / mo',
+  'portfolio.stat_lead':      'Years as Tech Lead',
+
+  'portfolio.footer_built':   'Built with Next.js + Tailwind CSS',
+
   'common.edit':    'Edit',
   'common.delete':  'Delete',
   'common.save':    'Save',
@@ -168,6 +234,72 @@ const AR: Record<string, string> = {
   'deals.pricing_freemium': 'مجاني جزئياً',
   'deals.works_with':       'يعمل مع',
   'deals.back_to_top':      'العودة للأعلى',
+
+  /* ── Portfolio ──────────────────────────────────────────────────────── */
+  'portfolio.toggle_ar':      'العربية',
+  'portfolio.toggle_en':      'English',
+  'portfolio.nav_about':      'عني',
+  'portfolio.nav_skills':     'المهارات',
+  'portfolio.nav_experience': 'الخبرة',
+  'portfolio.nav_projects':   'المشاريع',
+  'portfolio.nav_tools':      'الأدوات',
+  'portfolio.nav_contact':    'تواصل',
+  'portfolio.hire_me':        'لنتحدث',
+  'portfolio.blog_link':      'المدونة',
+  'portfolio.available':      'متاح للاستشارات والتعاون',
+  'portfolio.view_projects':  'عرض المشاريع',
+  'portfolio.read_blog':      'قراءة المدونة',
+  'portfolio.scroll':         'اسحب',
+
+  'portfolio.about_label':    'من أنا',
+  'portfolio.about_title':    'عقد من بناء منتجات حقيقية',
+  'portfolio.about_sub':      'من مستقل إلى قائد هندسي — بنيت أنظمة من الصفر، وطوّرت فرقاً، وأطلقت منتجات لها أثر حقيقي.',
+
+  'portfolio.skills_label':   'تقنياتي',
+  'portfolio.skills_title':   'الأدوات التي أبني بها',
+  'portfolio.skills_sub':     'مجموعة مختارة من التقنيات التي أستخدمها يومياً لبناء أنظمة إنتاجية.',
+
+  'portfolio.exp_label':      'الخبرة',
+  'portfolio.exp_title':      'المسيرة المهنية',
+  'portfolio.exp_sub':        'أكثر من ١٠ سنوات من البناء والإطلاق والقيادة عبر جميع طبقات التطوير.',
+  'portfolio.current':        'حالياً',
+
+  'portfolio.projects_label': 'أعمالي',
+  'portfolio.projects_title': 'مشاريع مختارة',
+  'portfolio.projects_sub':   'مزيج من المنتجات التي بنيتها أو أطلقتها أو ساهمت فيها.',
+
+  'portfolio.testimonials_label': 'شهادات',
+  'portfolio.testimonials_title': 'ما يقوله العملاء',
+  'portfolio.testimonials_sub':   'كلمات من أشخاص شاركتهم بناء منتجات حقيقية.',
+
+  'portfolio.tools_label':    'أدواتي المفضلة',
+  'portfolio.tools_title':    'ما أستخدمه فعلاً',
+  'portfolio.tools_sub':      'كل أداة هنا أدفع ثمنها وأستخدمها في مشاريع حقيقية. اضغط على أي أداة للحصول على خصم حصري.',
+  'portfolio.tools_all':      'شاهد جميع العروض والخصومات الحصرية',
+
+  'portfolio.edu_label':      'التعليم',
+  'portfolio.edu_title':      'الخلفية الأكاديمية',
+
+  'portfolio.contact_label':  'تواصل',
+  'portfolio.contact_title':  'لنبني شيئاً معاً',
+  'portfolio.contact_sub':    'متاح للاستشارات والمشاريع المستقلة والدور الكاملة. أرسل لي رسالة.',
+  'portfolio.send_email':     'أرسل بريداً إلكترونياً',
+  'portfolio.whatsapp':       'تواصل عبر واتساب',
+
+  'portfolio.form_name':      'اسمك',
+  'portfolio.form_email':     'بريدك الإلكتروني',
+  'portfolio.form_message':   'رسالتك',
+  'portfolio.form_send':      'أرسل الرسالة',
+  'portfolio.form_sending':   'جارٍ الإرسال…',
+  'portfolio.form_sent':      'تم الإرسال! سأرد قريباً.',
+  'portfolio.form_error':     'حدث خطأ. جرّب الإرسال مباشرة.',
+
+  'portfolio.stat_years':     'سنوات خبرة',
+  'portfolio.stat_projects':  'مشروع منجز',
+  'portfolio.stat_readers':   'قارئ شهرياً',
+  'portfolio.stat_lead':      'سنوات كقائد تقني',
+
+  'portfolio.footer_built':   'مبني بـ Next.js + Tailwind CSS',
 
   'common.edit':    'تعديل',
   'common.delete':  'حذف',

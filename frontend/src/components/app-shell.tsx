@@ -7,7 +7,7 @@ import { AppSidebar } from '@/components/app-sidebar'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname     = usePathname()
-  const isShell = pathname !== '/login' && pathname !== '/deals'
+  const isShell = pathname !== '/login' && pathname !== '/deals' && pathname !== '/portfolio'
   const [open, setOpen] = useState(false)
 
   if (!isShell) return <>{children}</>
