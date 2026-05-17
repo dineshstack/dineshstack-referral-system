@@ -2,29 +2,30 @@ import type { Metadata } from 'next'
 import { PortfolioPage } from '@/components/portfolio-page'
 
 export const metadata: Metadata = {
-  title: 'Dinesh | Tech Lead & Full-Stack Developer — UAE',
+  title: 'Dinesh Wijethunga | Senior Full-Stack Developer — Dubai, UAE',
   description:
-    'Tech Lead and Full-Stack Developer with 10+ years building production systems. Specializing in Laravel, Next.js, and scalable web architecture. Based in UAE.',
+    'Senior Full-Stack Developer with 10+ years building scalable web applications. Specializing in Laravel, React, Next.js, and DevOps. Based in Dubai, UAE.',
   keywords: [
-    'Tech Lead', 'Full-Stack Developer', 'Laravel', 'Next.js', 'TypeScript',
-    'UAE Developer', 'DineshStack', 'Web Architecture', 'Software Engineer',
+    'Senior Full-Stack Developer', 'Laravel Developer', 'React Developer', 'Next.js', 'TypeScript',
+    'UAE Developer', 'Dubai Developer', 'DineshStack', 'Dinesh Wijethunga', 'Software Engineer',
   ],
-  authors: [{ name: 'Dinesh', url: 'https://dineshstack.com' }],
-  creator: 'Dinesh',
+  authors: [{ name: 'Dinesh Wijethunga', url: 'https://dineshstack.com' }],
+  creator: 'Dinesh Wijethunga',
   openGraph: {
     type: 'profile',
-    title: 'Dinesh | Tech Lead & Full-Stack Developer',
+    title: 'Dinesh Wijethunga | Senior Full-Stack Developer',
     description:
-      '10+ years building production systems. Laravel · Next.js · TypeScript. Based in UAE.',
+      '10+ years building scalable web applications. Laravel · React · Next.js · TypeScript. Based in Dubai, UAE.',
     url: 'https://dineshstack.com/portfolio',
     siteName: 'DineshStack',
     firstName: 'Dinesh',
+    lastName: 'Wijethunga',
     images: [{ url: '/og-portfolio.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dinesh | Tech Lead & Full-Stack Developer',
-    description: '10+ years building production systems. Laravel · Next.js · TypeScript. UAE.',
+    title: 'Dinesh Wijethunga | Senior Full-Stack Developer',
+    description: '10+ years building scalable web apps. Laravel · React · Next.js · TypeScript. Dubai, UAE.',
     creator: '@dineshstack',
   },
   alternates: {
@@ -46,7 +47,7 @@ const jsonLd = {
       '@type':    'ProfilePage',
       '@id':      'https://dineshstack.com/portfolio#profilepage',
       url:        'https://dineshstack.com/portfolio',
-      name:       'Dinesh | Tech Lead & Full-Stack Developer',
+      name:       'Dinesh Wijethunga | Senior Full-Stack Developer',
       isPartOf:   { '@id': 'https://dineshstack.com/#website' },
       mainEntity: { '@id': 'https://dineshstack.com/#dinesh' },
       inLanguage: ['en', 'ar'],
@@ -54,20 +55,19 @@ const jsonLd = {
     {
       '@type':    'Person',
       '@id':      'https://dineshstack.com/#dinesh',
-      name:       'Dinesh',
+      name:       'Dinesh Wijethunga',
       url:        'https://dineshstack.com',
-      email:      'info@dineshstack.com',
-      jobTitle:   'Tech Lead',
-      description: 'Tech Lead and Full-Stack Developer with 10+ years building production-grade systems. Specializing in Laravel, Next.js, and scalable web architecture.',
+      email:      'hello@dineshwijethunga.me',
+      jobTitle:   'Senior Full-Stack Developer',
+      description: 'Senior Full-Stack Developer with 10+ years building scalable web applications. Specializing in Laravel, React, Next.js, and DevOps. Based in Dubai, UAE.',
       sameAs: [
         'https://github.com/dineshstack',
-        'https://linkedin.com/in/dineshstack',
+        'https://www.linkedin.com/in/dinesh-wijethunga',
         'https://twitter.com/dineshstack',
         'https://dineshstack.com',
       ],
-      worksFor: { '@type': 'Organization', name: 'Kief Studio' },
-      knowsAbout: ['Laravel', 'Next.js', 'TypeScript', 'MySQL', 'Docker', 'System Architecture', 'DevOps', 'CI/CD'],
-      address: { '@type': 'PostalAddress', addressCountry: 'AE' },
+      knowsAbout: ['Laravel', 'PHP', 'React', 'Next.js', 'TypeScript', 'MySQL', 'Docker', 'DevOps', 'VPS Management', 'AWS'],
+      address: { '@type': 'PostalAddress', addressLocality: 'Dubai', addressCountry: 'AE' },
     },
     {
       '@type':    'WebSite',

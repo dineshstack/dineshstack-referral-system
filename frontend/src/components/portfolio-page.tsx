@@ -34,27 +34,27 @@ function LinkedinIcon({ className }: { className?: string }) {
 /*  PROFILE DATA                                                                */
 /* ─────────────────────────────────────────────────────────────────────────── */
 const PROFILE = {
-  name:     'Dinesh',
-  initials: 'D',
-  title:    'Tech Lead & Full-Stack Developer',
-  tagline:  'Building production-grade systems since 2014',
-  bio:      "I'm a Tech Lead and Full-Stack Developer with 10+ years of experience architecting scalable web applications, leading engineering teams, and shipping products used by thousands of users. I specialize in Laravel and Next.js, and I share what I learn at dineshstack.com.",
-  location: 'United Arab Emirates',
-  email:    'info@dineshstack.com',
+  name:     'Dinesh Wijethunga',
+  initials: 'DW',
+  title:    'Senior Full-Stack Developer',
+  tagline:  'Building scalable web applications since 2014',
+  bio:      "Senior Full-Stack Developer with 10+ years of professional experience building scalable web applications and enterprise solutions. My expertise spans the entire development lifecycle — from crafting responsive UIs with React and Tailwind CSS to architecting robust backend systems with Laravel, PHP, and MySQL. I also share what I learn at dineshstack.com.",
+  location: 'Dubai, UAE',
+  email:    'hello@dineshwijethunga.me',
   blog:     'https://dineshstack.com',
   github:   'https://github.com/dineshstack',
-  linkedin: 'https://linkedin.com/in/dineshstack',
+  linkedin: 'https://www.linkedin.com/in/dinesh-wijethunga',
   twitter:  'https://twitter.com/dineshstack',
   whatsapp: 'https://wa.me/971000000000?text=Hi+Dinesh%2C+I%27d+like+to+discuss+a+project',
 }
 
 const ROLES = [
-  'Tech Lead',
-  'Full-Stack Developer',
+  'Senior Full-Stack Developer',
   'Laravel Architect',
   'Next.js Builder',
+  'SaaS Builder',
   'API Designer',
-  'Team Mentor',
+  'Tech Educator',
 ]
 
 const STATS = [
@@ -68,17 +68,17 @@ const SKILLS: Record<string, { items: string[]; icon: React.ElementType; color: 
   Backend: {
     icon: Server,
     color: 'from-violet-500/20 to-indigo-500/10',
-    items: ['Laravel 11', 'PHP 8.3', 'Node.js', 'REST API', 'MySQL', 'PostgreSQL', 'Redis', 'Sanctum', 'Queue/Jobs'],
+    items: ['Laravel 13', 'PHP 8.4', 'Node.js', 'REST API', 'MySQL', 'Redis', 'Sanctum', 'CodeIgniter', 'Queue/Jobs'],
   },
   Frontend: {
     icon: Layers,
     color: 'from-blue-500/20 to-cyan-500/10',
-    items: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'shadcn/ui', 'Zustand', 'React Query'],
+    items: ['Next.js 16', 'React 19', 'TypeScript', 'Vue.js', 'Tailwind CSS', 'Bootstrap', 'Inertia.js', 'jQuery'],
   },
   DevOps: {
     icon: Terminal,
     color: 'from-emerald-500/20 to-teal-500/10',
-    items: ['Docker', 'Linux', 'Nginx', 'GitHub Actions', 'CI/CD', 'VPS Hosting', 'Cloudflare'],
+    items: ['Docker', 'Linux Ubuntu', 'Nginx', 'GitHub Actions', 'CI/CD', 'VPS Management', 'AWS', 'Cloudflare'],
   },
   Tools: {
     icon: Wrench,
@@ -89,33 +89,93 @@ const SKILLS: Record<string, { items: string[]; icon: React.ElementType; color: 
 
 const EXPERIENCE = [
   {
-    company:     'Kief Studio',
-    role:        'Tech Lead',
-    period:      '2020 – Present',
-    location:    'UAE',
+    company:     'Senior Software Engineer',
+    role:        'Senior Software Engineer',
+    period:      '2024 – Present',
+    location:    'Dubai, UAE',
     current:     true,
-    description: 'Lead a cross-functional engineering team building enterprise web applications. Define architecture, run code reviews, establish engineering standards, and mentor junior developers. Reduced deployment time by 70% by introducing Docker + GitHub Actions CI/CD pipelines.',
-    stack:       ['Laravel', 'Next.js', 'TypeScript', 'Docker', 'MySQL', 'Redis'],
+    description: 'Leading development of enterprise applications using modern web technologies. Architecting scalable solutions and mentoring junior developers.',
+    stack:       ['Laravel', 'Next.js', 'TypeScript', 'MySQL'],
     color:       '#4f46e5',
   },
   {
-    company:     'Orions360',
-    role:        'Senior Full-Stack Developer',
-    period:      '2017 – 2020',
-    location:    'UAE',
+    company:     'Curve Spark Management LLC',
+    role:        'Software Engineer',
+    period:      'Sep 2023 – 2024',
+    location:    'Dubai, UAE',
     current:     false,
-    description: 'Developed and maintained multiple client-facing web platforms across fintech and e-commerce domains. Built REST APIs consumed by 3rd-party mobile apps and integrated multiple payment gateways.',
-    stack:       ['Laravel', 'Vue.js', 'MySQL', 'AWS S3'],
+    description: 'Developed and maintained software using Laravel & PHP frameworks. Designed user interfaces following Laravel practices. Reviewed team code in CI/CD cycles.',
+    stack:       ['Laravel', 'PHP', 'MySQL', 'CI/CD'],
     color:       '#0ea5e9',
   },
   {
-    company:     'Freelance',
-    role:        'Full-Stack Web Developer',
-    period:      '2014 – 2017',
-    location:    'Remote',
+    company:     'Cadima You See LLC',
+    role:        'Software Developer',
+    period:      'Aug 2022 – Sep 2023',
+    location:    'Dubai, UAE',
     current:     false,
-    description: 'Built custom CMS platforms, e-commerce sites, and business dashboards for clients across the Middle East and South Asia. Delivered 30+ projects end-to-end as a solo developer.',
-    stack:       ['PHP', 'Laravel', 'jQuery', 'Bootstrap', 'MySQL'],
+    description: 'Managed company website on GoDaddy. Built international job portal using Laravel, Bootstrap, JavaScript, and MySQL.',
+    stack:       ['Laravel', 'Bootstrap', 'JavaScript', 'MySQL'],
+    color:       '#8b5cf6',
+  },
+  {
+    company:     'ITElligence Services (Pvt) Ltd',
+    role:        'Software Engineer',
+    period:      'June 2021 – July 2022',
+    location:    'Sri Lanka',
+    current:     false,
+    description: 'AWS hosting management. Implemented Blockchain network with Hyperledger Fabric. Developed REST API for diamond traceability application.',
+    stack:       ['Laravel', 'AWS', 'Hyperledger Fabric', 'REST API'],
+    color:       '#22c55e',
+  },
+  {
+    company:     'Webtude Pvt Ltd',
+    role:        'Senior Full-Stack Developer',
+    period:      'June 2020 – Apr 2021',
+    location:    'Sri Lanka',
+    current:     false,
+    description: 'Bluehost Web Hosting management. VPS setup and development environment configuration. Developed Ad classified website and E-commerce sites.',
+    stack:       ['Laravel', 'PHP', 'JavaScript', 'MySQL', 'VPS'],
+    color:       '#f59e0b',
+  },
+  {
+    company:     'Kapruka.com',
+    role:        'Full-Stack Developer',
+    period:      'June 2018 – June 2020',
+    location:    'Sri Lanka',
+    current:     false,
+    description: 'E-commerce site development for Sri Lankan companies. Payment gateway integration. REST API development with JWT.',
+    stack:       ['Laravel', 'PHP', 'MySQL', 'JWT', 'REST API'],
+    color:       '#ef4444',
+  },
+  {
+    company:     'QuickBalanze Solution',
+    role:        'PHP Web Developer',
+    period:      'Oct 2016 – June 2018',
+    location:    'Sri Lanka',
+    current:     false,
+    description: 'ERP system development including HR, Attendance, and Job task management systems. Database design and development with MySQL.',
+    stack:       ['PHP', 'MySQL', 'Bootstrap', 'jQuery'],
+    color:       '#6366f1',
+  },
+  {
+    company:     'Orion360',
+    role:        'Full-Stack Developer & Founder',
+    period:      '2018 – Present',
+    location:    'Remote',
+    current:     true,
+    description: 'Founded web development agency specializing in Laravel and React solutions. Developed multiple SaaS products including Service Station Management System.',
+    stack:       ['Laravel', 'React', 'MySQL', 'VPS'],
+    color:       '#0ea5e9',
+  },
+  {
+    company:     'Dinesh Stack',
+    role:        'Content Creator & Educator',
+    period:      '2023 – Present',
+    location:    'Remote',
+    current:     true,
+    description: 'Created educational platform teaching Laravel, React, and modern web development. Producing tutorials, courses, and technical content for the developer community.',
+    stack:       ['Laravel', 'Next.js', 'TypeScript', 'Technical Writing'],
     color:       '#8b5cf6',
   },
 ]
@@ -124,8 +184,8 @@ const PROJECTS = [
   {
     name:        'DineshStack Referral System',
     tag:         'SaaS',
-    description: 'A full-stack affiliate link management platform with real-time analytics, smart queue rotation, payout tracking, public deals landing page, and multi-language support (EN/AR).',
-    stack:       ['Laravel 11', 'Next.js 16', 'TypeScript', 'MySQL', 'Tailwind CSS v4'],
+    description: 'Full-stack affiliate link management platform with auto-rotating link queues, real-time analytics, payout tracking, public deals page, and multi-language EN/AR support. Race-condition-safe with DB row-level locks.',
+    stack:       ['Laravel 13', 'Next.js 16', 'TypeScript', 'MySQL', 'Tailwind CSS', 'shadcn/ui'],
     url:         'https://dineshstack.com/deals',
     github:      'https://github.com/dineshstack',
     featured:    true,
@@ -133,38 +193,41 @@ const PROJECTS = [
     color:       '#4f46e5',
   },
   {
-    name:        'DineshStack Blog',
-    tag:         'Content',
-    description: 'A technical blog reaching 15K+ monthly readers. Covers Laravel, Next.js, DevOps, and software architecture. Full SEO optimization, dark mode, and Arabic RTL support.',
-    stack:       ['Next.js', 'MDX', 'Tailwind CSS', 'Vercel'],
-    url:         'https://dineshstack.com',
+    name:        'Work Order Management System',
+    tag:         'Enterprise',
+    description: 'Vehicle service station management system with inventory management, sales, and payment management. Fully AJAX-based system built with Laravel 8.',
+    stack:       ['Laravel 8', 'PHP', 'JavaScript', 'AJAX', 'MySQL', 'Bootstrap'],
+    url:         'https://work-order.orions360.com',
     featured:    true,
-    year:        2021,
+    year:        2023,
     color:       '#0ea5e9',
   },
   {
-    name:        'Multi-Tenant SaaS Platform',
-    tag:         'Enterprise',
-    description: 'White-label SaaS platform serving multiple clients from a single codebase. Team-based permissions, custom domain support, and per-tenant configuration.',
-    stack:       ['Laravel', 'Vue.js', 'MySQL', 'Redis', 'Docker'],
+    name:        'Kampus Jobs – School Management',
+    tag:         'Platform',
+    description: 'Platform connecting students, schools, and companies for job placements and experience programs. Handles multi-role access for schools, companies, and students.',
+    stack:       ['Laravel 7', 'PHP', 'JavaScript', 'AJAX', 'MySQL', 'Bootstrap'],
+    url:         'https://kampusjob.orions360.com',
     featured:    false,
     year:        2022,
     color:       '#8b5cf6',
   },
   {
-    name:        'E-Commerce API Platform',
-    tag:         'API',
-    description: 'RESTful API platform powering multiple mobile and web storefronts. Handles 50K+ daily requests with Redis caching, job queues, and webhook delivery.',
-    stack:       ['Laravel', 'MySQL', 'Redis', 'Sanctum', 'Stripe'],
+    name:        'Dogs.lk – Ad Classified Website',
+    tag:         'Marketplace',
+    description: 'Ad classified website for dog-related advertisements with membership system and payment gateway integration.',
+    stack:       ['Laravel 7', 'PHP', 'MySQL', 'JavaScript', 'Payment Gateway'],
+    url:         'https://dogslk.orions360.com',
     featured:    false,
     year:        2021,
     color:       '#22c55e',
   },
   {
-    name:        'Real-Time Analytics Dashboard',
-    tag:         'Dashboard',
-    description: 'Internal analytics platform for tracking user behaviour, revenue trends, and system health across multiple client applications in real time.',
-    stack:       ['Next.js', 'Recharts', 'Laravel', 'WebSockets'],
+    name:        'E-Commerce Website',
+    tag:         'E-Commerce',
+    description: 'Developed for an event organization company to sell and rent physical and digital products to customers. Full product and order management with payment integration.',
+    stack:       ['Laravel', 'React', 'Inertia.js', 'MySQL', 'Tailwind CSS', 'VPS'],
+    url:         'https://lankaindex.orions360.com',
     featured:    false,
     year:        2023,
     color:       '#f59e0b',
@@ -173,12 +236,20 @@ const PROJECTS = [
 
 const EDUCATION = [
   {
-    degree:   'Bachelor of Computer Science & Engineering',
-    school:   'University',
-    period:   '2010 – 2014',
-    location: 'India',
+    degree:   'BSc (Hons) Computing',
+    school:   'Wrexham Glyndwr University – UK',
+    period:   '2014 – 2022',
+    location: 'UK',
     icon:     '🎓',
-    note:     'Foundation in algorithms, data structures, and software engineering principles.',
+    note:     'Passed with Second Lower Class. Covered advanced software engineering, distributed systems, and web application development.',
+  },
+  {
+    degree:   'Bachelor of Information Technology',
+    school:   'University of Colombo',
+    period:   '2014 – 2017',
+    location: 'Sri Lanka',
+    icon:     '🏛️',
+    note:     '3rd year undergraduate studies in information technology, programming, and database management.',
   },
 ]
 
@@ -701,12 +772,28 @@ function AboutSection() {
               sub={t('portfolio.about_sub')}
             />
             <div className="space-y-4 text-muted-foreground leading-relaxed text-sm sm:text-base">
-              <p>I started writing PHP in 2014 during university and never stopped. Over the years I've worked across every layer of the stack — database design, API architecture, React frontends, DevOps pipelines, and team leadership.</p>
-              <p>Today I lead engineering at Kief Studio, where I architect enterprise web platforms, set coding standards, and mentor engineers. Outside work I write technical deep-dives on <a href={PROFILE.blog} target="_blank" rel="noreferrer noopener" className="text-primary hover:underline">dineshstack.com</a>.</p>
-              <p>I believe great software is built through clear thinking, ruthless simplicity, and consistent iteration — not clever tricks.</p>
+              <p>{t('portfolio.about_p1')}</p>
+              <p>
+                {t('portfolio.about_p2_pre')}{' '}
+                <strong className="text-foreground">{t('portfolio.about_p2_orion')}</strong>{' '}
+                {t('portfolio.about_p2_mid')}{' '}
+                <strong className="text-foreground">
+                  <a href={PROFILE.blog} target="_blank" rel="noreferrer noopener" className="text-primary hover:underline">
+                    {t('portfolio.about_p2_ds')}
+                  </a>
+                </strong>
+                {t('portfolio.about_p2_post')}
+              </p>
+              <p>{t('portfolio.about_p3')}</p>
             </div>
             <div className="mt-8 flex flex-wrap gap-2">
-              {['Open Source', 'Technical Writing', 'Team Mentoring', 'System Design', 'API Architecture'].map(tag => (
+              {[
+                t('portfolio.tag_opensource'),
+                t('portfolio.tag_writing'),
+                t('portfolio.tag_mentoring'),
+                t('portfolio.tag_design'),
+                t('portfolio.tag_api'),
+              ].map(tag => (
                 <span key={tag} className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
                   {tag}
                 </span>
@@ -728,15 +815,15 @@ function AboutSection() {
                 <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
                 <span className="ms-2 text-[11px] text-white/30">dinesh.config.ts</span>
               </div>
-              <div className="px-4 py-4 text-[13px] leading-relaxed" role="img" aria-label="Dinesh configuration: role Tech Lead, location UAE, experience 10+ years, stack Laravel and Next.js, available true">
+              <div className="px-4 py-4 text-[13px] leading-relaxed" role="img" aria-label="Dinesh Wijethunga configuration: role Senior Full-Stack Developer, location Dubai UAE, experience 10+ years, stack Laravel React and Next.js, available true">
                 <span className="text-blue-400">const</span>{' '}
                 <span className="text-green-400">dinesh</span>{' '}
                 <span className="text-white/60">= {'{'}</span>
                 {[
-                  ['role',       '"Tech Lead"'],
-                  ['location',   '"UAE"'],
+                  ['role',       '"Senior Full-Stack Developer"'],
+                  ['location',   '"Dubai, UAE"'],
                   ['experience', '"10+ years"'],
-                  ['stack',      '["Laravel", "Next.js"]'],
+                  ['stack',      '["Laravel", "React", "Next.js"]'],
                   ['available',  'true'],
                 ].map(([k, v]) => (
                   <div key={k} className="ps-4">
@@ -1145,11 +1232,11 @@ function EducationSection() {
             <div className="flex flex-col gap-3 rounded-2xl border border-dashed border-primary/30 bg-primary/5 p-5">
               <div className="text-3xl" aria-hidden="true">📚</div>
               <div>
-                <h3 className="font-bold text-sm">Continuous Learning</h3>
-                <p className="text-primary text-sm font-medium mt-0.5">Self-directed</p>
+                <h3 className="font-bold text-sm">{t('portfolio.edu_continuous_title')}</h3>
+                <p className="text-primary text-sm font-medium mt-0.5">{t('portfolio.edu_continuous_school')}</p>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                I believe in staying sharp through building real projects, reading technical RFCs, and sharing knowledge on dineshstack.com. Learning never stops.
+                {t('portfolio.edu_continuous_note')}
               </p>
               <a
                 href={PROFILE.blog}

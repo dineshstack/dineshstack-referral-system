@@ -27,7 +27,8 @@ Route::get('/start/{slug}',  [RedirectController::class, 'redirect'])->name('ref
 // Legacy — kept so old published /go/ links still work
 Route::get('/go/{slug}',     [RedirectController::class, 'redirect'])->name('referral.redirect');
 
-// Root-level (cleanest slug — must be last to avoid shadowing routes above)
+// Root-level (cleanest slug — must be last to avoid shadowing routes above).
+// Explicitly exclude frontend SPA paths so they are never intercepted by Laravel.
 Route::get('/{slug}',        [RedirectController::class, 'redirect'])
     ->name('referral.root')
-    ->where('slug', '[a-z0-9][a-z0-9\-]*');
+    ->where('slug', '(?!portfolio|login|deals$|analytics|programs|links)[a-z0-9][a-z0-9\-]*');
